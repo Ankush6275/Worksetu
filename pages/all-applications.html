@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Applications - WorkSetu</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gray-50">
+    
+    <!-- Navigation Bar -->
+    <nav class="bg-white shadow-md sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-4">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center space-x-2">
+                    <i class="fas fa-briefcase text-green-600 text-2xl"></i>
+                    <h1 class="text-2xl font-bold text-gray-800">WorkSetu</h1>
+                </div>
+                
+                <div class="hidden md:flex space-x-6">
+                    <a href="employer-dashboard.html" class="text-gray-600 hover:text-green-600 transition">
+                        <i class="fas fa-home mr-1"></i>Dashboard
+                    </a>
+                    <a href="post-job.html" class="text-gray-600 hover:text-green-600 transition">
+                        <i class="fas fa-plus-circle mr-1"></i>Post Job
+                    </a>
+                    <a href="my-jobs.html" class="text-gray-600 hover:text-green-600 transition">
+                        <i class="fas fa-briefcase mr-1"></i>My Jobs
+                    </a>
+                    <a href="all-applications.html" class="text-green-600 font-semibold border-b-2 border-green-600 pb-1">
+                        <i class="fas fa-users mr-1"></i>Applications
+                    </a>
+                </div>
+                
+                <div class="flex items-center space-x-4">
+                    <span class="text-gray-700" id="user-name">Loading...</span>
+                    <button id="logout-btn" class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition">
+                        <i class="fas fa-sign-out-alt mr-2"></i>Logout
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container mx-auto px-4 py-8">
+        
+        <!-- Header -->
+        <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+            <h1 class="text-3xl font-bold text-gray-800 mb-2">
+                <i class="fas fa-users text-green-600 mr-2"></i>All Applications
+            </h1>
+            <p class="text-gray-600">Review and manage applications for all your jobs</p>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="grid md:grid-cols-3 gap-6 mb-6">
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-600 text-sm mb-1">Total Applications</p>
+                        <h3 class="text-3xl font-bold text-gray-800" id="total-apps">0</h3>
+                    </div>
+                    <i class="fas fa-file-alt text-4xl text-blue-500"></i>
+                </div>
+            </div>
+            
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-600 text-sm mb-1">Pending Review</p>
+                        <h3 class="text-3xl font-bold text-yellow-600" id="pending-apps">0</h3>
+                    </div>
+                    <i class="fas fa-clock text-4xl text-yellow-500"></i>
+                </div>
+            </div>
+            
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-600 text-sm mb-1">Accepted</p>
+                        <h3 class="text-3xl font-bold text-green-600" id="accepted-apps">0</h3>
+                    </div>
+                    <i class="fas fa-check-circle text-4xl text-green-500"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filter & Search -->
+        <div class="bg-white rounded-lg shadow-md p-4 mb-6">
+            <div class="flex flex-wrap gap-4">
+                <div class="flex-1 min-w-[200px]">
+                    <input 
+                        type="text" 
+                        id="search-applications" 
+                        placeholder="Search by worker name, job title..." 
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                    >
+                </div>
+                <select id="filter-status" class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+                    <option value="all">All Status</option>
+                    <option value="pending">Pending</option>
+                    <option value="accepted">Accepted</option>
+                    <option value="rejected">Rejected</option>
+                </select>
+                <select id="sort-applications" class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+                    <option value="newest">Newest First</option>
+                    <option value="oldest">Oldest First</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Applications List -->
+        <div id="applications-container" class="space-y-4">
+            <div class="text-center py-12">
+                <i class="fas fa-spinner fa-spin text-4xl text-green-600 mb-4"></i>
+                <p class="text-gray-600">Loading applications...</p>
+            </div>
+        </div>
+
+        <!-- Empty State -->
+        <div id="empty-state" class="hidden bg-white rounded-lg shadow-md p-12 text-center">
+            <i class="fas fa-inbox text-gray-300 text-6xl mb-4"></i>
+            <h3 class="text-xl font-semibold text-gray-700 mb-2">No Applications Yet</h3>
+            <p class="text-gray-600">Applications will appear here when workers apply to your jobs.</p>
+        </div>
+    </div>
+
+    <script type="module">
+        import { getCurrentUser, getUserData, logoutUser, checkAuthState } from '../js/auth.js';
+        import { db, collection, query, where, getDocs, orderBy } from '../js/firebase-config.js';
+        import { acceptApplication, rejectApplication } from '../js/applications.js';
+        
+        let allApplications = [];
+        let currentUser = null;
+        
+        // Check authentication
+        checkAuthState(async (user) => {
+            if (!user) {
+                window.location.href = 'employer-login.html';
+                return;
+            }
+            
+            currentUser = user;
+            const result = await getUserData(user.uid);
+            
+            if (result.success) {
+                if (result.data.userType !== 'employer') {
+                    alert('⛔ Access Denied! This page is for employers only.');
+                    window.location.href = result.data.userType === 'worker' ? 'worker-dashboard.html' : 'login.html';
+                    return;
+                }
+                
+                document.getElementById('user-name').textContent = result.data.fullName;
+                await loadApplications(user.uid);
+            }
+        });
+        
+        // Logout
+        document.getElementById('logout-btn').addEventListener('click', async () => {
+            if (confirm('Are you sure you want to logout?')) {
+                await logoutUser();
+                window.location.href = '../index.html';
+            }
+        });
+        
+        // Load all applications for employer's jobs
+        async function loadApplications(employerId) {
+            try {
+                const applicationsRef = collection(db, 'applications');
+                const q = query(
+                    applicationsRef,
+                    where('employerId', '==', employerId),
+                    orderBy('appliedAt', 'desc')
+                );
+                
+                const querySnapshot = await getDocs(q);
+                allApplications = [];
+                
+                querySnapshot.forEach((doc) => {
+                    allApplications.push({
+                        id: doc.id,
+                        ...doc.data()
+                    });
+                });
+                
+                updateStats();
+                displayApplications(allApplications);
+                
+            } catch (error) {
+                console.error('Error loading applications:', error);
+                document.getElementById('applications-container').innerHTML = `
+                    <div class="bg-red-50 border border-red-200 rounded-lg p-4 text-center">
+                        <i class="fas fa-exclamation-circle text-red-500 text-2xl mb-2"></i>
+                        <p class="text-red-700">Error loading applications. Please refresh the page.</p>
+                    </div>
+                `;
+            }
+        }
+        
+        // Update stats
+        function updateStats() {
+            const total = allApplications.length;
+            const pending = allApplications.filter(a => a.status === 'pending').length;
+            const accepted = allApplications.filter(a => a.status === 'accepted').length;
+            
+            document.getElementById('total-apps').textContent = total;
+            document.getElementById('pending-apps').textContent = pending;
+            document.getElementById('accepted-apps').textContent = accepted;
+        }
+        
+        // Display applications
+        function displayApplications(applications) {
+            const container = document.getElementById('applications-container');
+            const emptyState = document.getElementById('empty-state');
+            
+            if (applications.length === 0) {
+                container.classList.add('hidden');
+                emptyState.classList.remove('hidden');
+                return;
+            }
+            
+            container.classList.remove('hidden');
+            emptyState.classList.add('hidden');
+            
+            container.innerHTML = applications.map(app => {
+                const statusColors = {
+                    pending: 'bg-yellow-100 text-yellow-700',
+                    accepted: 'bg-green-100 text-green-700',
+                    rejected: 'bg-red-100 text-red-700'
+                };
+                
+                return `
+                    <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition">
+                        <div class="flex justify-between items-start mb-4">
+                            <div class="flex-1">
+                                <div class="flex items-center mb-2">
+                                    <h3 class="text-xl font-bold text-gray-800 mr-3">${app.workerName}</h3>
+                                    <span class="px-3 py-1 ${statusColors[app.status]} rounded-full text-sm font-semibold capitalize">
+                                        ${app.status}
+                                    </span>
+                                </div>
+                                <p class="text-gray-600 mb-1">
+                                    <i class="fas fa-briefcase mr-2"></i><strong>Job:</strong> ${app.jobTitle}
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+                            <div class="text-sm">
+                                <i class="fas fa-map-marker-alt text-gray-500 mr-2"></i>
+                                <span class="text-gray-700">${app.workerLocation || 'N/A'}</span>
+                            </div>
+                            <div class="text-sm">
+                                <i class="fas fa-briefcase text-gray-500 mr-2"></i>
+                                <span class="text-gray-700">${app.workerExperience || 'N/A'}</span>
+                            </div>
+                            <div class="text-sm">
+                                <i class="fas fa-envelope text-gray-500 mr-2"></i>
+                                <span class="text-gray-700">${app.workerEmail}</span>
+                            </div>
+                            <div class="text-sm">
+                                <i class="fas fa-star text-gray-500 mr-2"></i>
+                                <span class="text-gray-700">Trust: ${app.workerTrustScore || 50}</span>
+                            </div>
+                        </div>
+                        
+                        ${app.message ? `
+                            <div class="bg-gray-50 rounded-lg p-3 mb-4">
+                                <p class="text-sm text-gray-700"><strong>Message:</strong> ${app.message}</p>
+                            </div>
+                        ` : ''}
+                        
+                        <div class="flex items-center justify-between pt-4 border-t border-gray-200">
+                            <div class="text-xs text-gray-500">
+                                <i class="fas fa-calendar mr-1"></i>
+                                Applied: ${new Date(app.appliedAt).toLocaleString()}
+                            </div>
+                            
+                            ${app.status === 'pending' ? `
+                                <div class="flex space-x-2">
+                                    <button onclick="acceptApp('${app.id}')" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition text-sm">
+                                        <i class="fas fa-check mr-1"></i>Accept
+                                    </button>
+                                    <button onclick="rejectApp('${app.id}')" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition text-sm">
+                                        <i class="fas fa-times mr-1"></i>Reject
+                                    </button>
+                                </div>
+                            ` : app.status === 'accepted' ? `
+                                <span class="text-green-600 text-sm font-semibold">
+                                    <i class="fas fa-check-circle mr-1"></i>Accepted
+                                </span>
+                            ` : `
+                                <span class="text-red-600 text-sm font-semibold">
+                                    <i class="fas fa-times-circle mr-1"></i>Rejected
+                                </span>
+                            `}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        // Accept application
+        window.acceptApp = async function(applicationId) {
+            if (!confirm('Accept this application?')) return;
+            
+            const result = await acceptApplication(applicationId);
+            if (result.success) {
+                alert('✅ Application accepted!');
+                await loadApplications(currentUser.uid);
+            } else {
+                alert('❌ Error: ' + result.error);
+            }
+        }
+        
+        // Reject application
+        window.rejectApp = async function(applicationId) {
+            const reason = prompt('Rejection reason (optional):');
+            if (reason === null) return; // Cancelled
+            
+            const result = await rejectApplication(applicationId, reason);
+            if (result.success) {
+                alert('✅ Application rejected.');
+                await loadApplications(currentUser.uid);
+            } else {
+                alert('❌ Error: ' + result.error);
+            }
+        }
+        
+        // Search
+        document.getElementById('search-applications').addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+            const filtered = allApplications.filter(app => 
+                app.workerName.toLowerCase().includes(searchTerm) ||
+                app.jobTitle.toLowerCase().includes(searchTerm) ||
+                app.workerEmail.toLowerCase().includes(searchTerm)
+            );
+            displayApplications(filtered);
+        });
+        
+        // Filter by status
+        document.getElementById('filter-status').addEventListener('change', (e) => {
+            const status = e.target.value;
+            const filtered = status === 'all' ? allApplications : allApplications.filter(app => app.status === status);
+            displayApplications(filtered);
+        });
+        
+        // Sort
+        document.getElementById('sort-applications').addEventListener('change', (e) => {
+            const sortBy = e.target.value;
+            let sorted = [...allApplications];
+            
+            if (sortBy === 'newest') {
+                sorted.sort((a, b) => new Date(b.appliedAt) - new Date(a.appliedAt));
+            } else if (sortBy === 'oldest') {
+                sorted.sort((a, b) => new Date(a.appliedAt) - new Date(b.appliedAt));
+            }
+            
+            displayApplications(sorted);
+        });
+    </script>
+
+</body>
+</html>

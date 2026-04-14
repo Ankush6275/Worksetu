@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Profile - WorkSetu</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gray-50">
+    
+    <!-- Navigation Bar -->
+    <nav class="bg-white shadow-md sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-4">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center space-x-2">
+                    <i class="fas fa-briefcase text-blue-600 text-2xl"></i>
+                    <h1 class="text-2xl font-bold text-gray-800">WorkSetu</h1>
+                </div>
+                
+                <div class="flex items-center space-x-4">
+                    <button onclick="goBack()" class="text-gray-600 hover:text-blue-600">
+                        <i class="fas fa-arrow-left mr-2"></i>Back
+                    </button>
+                    <button id="logout-btn" class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition">
+                        <i class="fas fa-sign-out-alt mr-2"></i>Logout
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container mx-auto px-4 py-8">
+        <div class="max-w-3xl mx-auto">
+            
+            <!-- Header with Profile Photo -->
+            <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                <div class="flex flex-col md:flex-row items-center">
+                    <!-- Profile Photo Section -->
+                    <div class="relative mb-4 md:mb-0 md:mr-6">
+                        <div class="w-32 h-32 rounded-full overflow-hidden bg-gray-200 border-4 border-white shadow-lg">
+                            <img 
+                                id="profile-photo-preview" 
+                                src="https://via.placeholder.com/150/3B82F6/FFFFFF?text=Photo" 
+                                alt="Profile Photo"
+                                class="w-full h-full object-cover"
+                            >
+                        </div>
+                        <button 
+                            type="button"
+                            onclick="document.getElementById('photo-input').click()"
+                            class="absolute bottom-0 right-0 bg-blue-600 text-white rounded-full w-10 h-10 flex items-center justify-center hover:bg-blue-700 transition shadow-lg"
+                            title="Change Photo"
+                        >
+                            <i class="fas fa-camera"></i>
+                        </button>
+                        <input 
+                            type="file" 
+                            id="photo-input" 
+                            accept="image/*" 
+                            class="hidden"
+                        >
+                    </div>
+                    
+                    <div class="text-center md:text-left">
+                        <h1 class="text-3xl font-bold text-gray-800 mb-1" id="header-name">Loading...</h1>
+                        <p class="text-gray-600 mb-2" id="header-email">Loading...</p>
+                        <p class="text-sm text-gray-500">
+                            <i class="fas fa-info-circle mr-1"></i>
+                            Click the camera icon to change your photo
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Profile Form -->
+            <form id="profile-form" class="bg-white rounded-lg shadow-md p-6 space-y-6">
+                
+                <h2 class="text-xl font-bold text-gray-800 border-b pb-3">
+                    <i class="fas fa-user-edit mr-2"></i>Personal Information
+                </h2>
+
+                <!-- Full Name -->
+                <div>
+                    <label class="block text-gray-700 font-semibold mb-2">
+                        <i class="fas fa-user mr-2"></i>Full Name *
+                    </label>
+                    <input 
+                        type="text" 
+                        id="fullName" 
+                        placeholder="Enter your full name"
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        required
+                    >
+                </div>
+
+                <!-- Email (Read-only) -->
+                <div>
+                    <label class="block text-gray-700 font-semibold mb-2">
+                        <i class="fas fa-envelope mr-2"></i>Email Address
+                    </label>
+                    <input 
+                        type="email" 
+                        id="email" 
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-100 cursor-not-allowed"
+                        disabled
+                    >
+                    <p class="text-xs text-gray-500 mt-1">
+                        <i class="fas fa-lock mr-1"></i>Email cannot be changed
+                    </p>
+                </div>
+
+                <!-- Location -->
+                <div>
+                    <label class="block text-gray-700 font-semibold mb-2">
+                        <i class="fas fa-map-marker-alt mr-2"></i>Location *
+                    </label>
+                    <input 
+                        type="text" 
+                        id="location" 
+                        placeholder="e.g., Mumbai, Maharashtra"
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        required
+                    >
+                </div>
+
+                <!-- Phone Number -->
+                <div>
+                    <label class="block text-gray-700 font-semibold mb-2">
+                        <i class="fas fa-phone mr-2"></i>Phone Number
+                    </label>
+                    <input 
+                        type="tel" 
+                        id="phone" 
+                        placeholder="Enter your phone number"
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    >
+                </div>
+
+                <!-- Worker-specific fields -->
+                <div id="worker-fields" class="hidden space-y-6">
+                    <h2 class="text-xl font-bold text-gray-800 border-b pb-3 mt-6">
+                        <i class="fas fa-tools mr-2"></i>Professional Information
+                    </h2>
+
+                    <!-- Skills -->
+                    <div>
+                        <label class="block text-gray-700 font-semibold mb-3">
+                            <i class="fas fa-tools mr-2"></i>Skills *
+                        </label>
+                        <div class="grid grid-cols-2 md:grid-cols-3 gap-3 mb-3">
+                            <label class="flex items-center p-3 border border-gray-300 rounded-lg hover:bg-blue-50 cursor-pointer transition">
+                                <input type="checkbox" value="Mason" class="skill-checkbox mr-2">
+                                <span>Mason</span>
+                            </label>
+                            <label class="flex items-center p-3 border border-gray-300 rounded-lg hover:bg-blue-50 cursor-pointer transition">
+                                <input type="checkbox" value="Plumber" class="skill-checkbox mr-2">
+                                <span>Plumber</span>
+                            </label>
+                            <label class="flex items-center p-3 border border-gray-300 rounded-lg hover:bg-blue-50 cursor-pointer transition">
+                                <input type="checkbox" value="Electrician" class="skill-checkbox mr-2">
+                                <span>Electrician</span>
+                            </label>
+                            <label class="flex items-center p-3 border border-gray-300 rounded-lg hover:bg-blue-50 cursor-pointer transition">
+                                <input type="checkbox" value="Carpenter" class="skill-checkbox mr-2">
+                                <span>Carpenter</span>
+                            </label>
+                            <label class="flex items-center p-3 border border-gray-300 rounded-lg hover:bg-blue-50 cursor-pointer transition">
+                                <input type="checkbox" value="Painter" class="skill-checkbox mr-2">
+                                <span>Painter</span>
+                            </label>
+                            <label class="flex items-center p-3 border border-gray-300 rounded-lg hover:bg-blue-50 cursor-pointer transition">
+                                <input type="checkbox" value="Helper" class="skill-checkbox mr-2">
+                                <span>Helper</span>
+                            </label>
+                        </div>
+                        <input 
+                            type="text" 
+                            id="other-skills" 
+                            placeholder="Other skills (comma separated)"
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        >
+                    </div>
+
+                    <!-- Experience -->
+                    <div>
+                        <label class="block text-gray-700 font-semibold mb-2">
+                            <i class="fas fa-briefcase mr-2"></i>Experience *
+                        </label>
+                        <select 
+                            id="experience" 
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        >
+                            <option value="">Select experience</option>
+                            <option value="0-1 years">0-1 years</option>
+                            <option value="1-3 years">1-3 years</option>
+                            <option value="3-5 years">3-5 years</option>
+                            <option value="5-10 years">5-10 years</option>
+                            <option value="10+ years">10+ years</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Employer-specific fields -->
+                <div id="employer-fields" class="hidden space-y-6">
+                    <h2 class="text-xl font-bold text-gray-800 border-b pb-3 mt-6">
+                        <i class="fas fa-building mr-2"></i>Business Information
+                    </h2>
+
+                    <!-- Business Name -->
+                    <div>
+                        <label class="block text-gray-700 font-semibold mb-2">
+                            <i class="fas fa-building mr-2"></i>Business Name *
+                        </label>
+                        <input 
+                            type="text" 
+                            id="businessName" 
+                            placeholder="Enter your business name"
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        >
+                    </div>
+
+                    <!-- Business Type -->
+                    <div>
+                        <label class="block text-gray-700 font-semibold mb-2">
+                            <i class="fas fa-industry mr-2"></i>Business Type *
+                        </label>
+                        <select 
+                            id="businessType" 
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        >
+                            <option value="">Select business type</option>
+                            <option value="Construction">Construction</option>
+                            <option value="Contractor">Contractor</option>
+                            <option value="Real Estate">Real Estate</option>
+                            <option value="Manufacturing">Manufacturing</option>
+                            <option value="Services">Services</option>
+                            <option value="Retail">Retail</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Bio -->
+                <div>
+                    <label class="block text-gray-700 font-semibold mb-2">
+                        <i class="fas fa-align-left mr-2"></i>About Me
+                    </label>
+                    <textarea 
+                        id="bio" 
+                        rows="4"
+                        placeholder="Tell others about yourself..."
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    ></textarea>
+                </div>
+
+                <!-- Buttons -->
+                <div class="flex space-x-4 pt-4 border-t">
+                    <button 
+                        type="submit" 
+                        id="save-btn"
+                        class="flex-1 bg-blue-600 text-white py-3 px-6 rounded-lg hover:bg-blue-700 transition font-semibold shadow-lg"
+                    >
+                        <i class="fas fa-save mr-2"></i>Save Changes
+                    </button>
+                    <button 
+                        type="button" 
+                        onclick="goBack()"
+                        class="px-6 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition font-semibold"
+                    >
+                        Cancel
+                    </button>
+                </div>
+            </form>
+
+            <!-- Upload Progress -->
+            <div id="upload-progress" class="hidden bg-white rounded-lg shadow-md p-6 mt-6">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-gray-700 font-semibold">Uploading photo...</span>
+                    <span id="upload-percentage" class="text-blue-600 font-bold">0%</span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-3">
+                    <div id="upload-bar" class="bg-blue-600 h-3 rounded-full transition-all" style="width: 0%"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { getCurrentUser, getUserData, logoutUser, checkAuthState } from '../js/auth.js';
+        import { db, storage, doc, getDoc, updateDoc } from '../js/firebase-config.js';
+        import { ref, uploadBytesResumable, getDownloadURL } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js';
+        
+        let currentUser = null;
+        let userData = null;
+        let selectedPhotoFile = null;
+        
+        // Check authentication
+        checkAuthState(async (user) => {
+            if (!user) {
+                alert('Please login to edit your profile');
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            currentUser = user;
+            await loadUserData(user.uid);
+        });
+        
+        // Go back function
+        window.goBack = function() {
+            if (userData.userType === 'worker') {
+                window.location.href = 'worker-dashboard.html';
+            } else if (userData.userType === 'employer') {
+                window.location.href = 'employer-dashboard.html';
+            } else {
+                window.location.href = '../index.html';
+            }
+        }
+        
+        // Logout
+        document.getElementById('logout-btn').addEventListener('click', async () => {
+            if (confirm('Are you sure you want to logout?')) {
+                await logoutUser();
+                window.location.href = '../index.html';
+            }
+        });
+        
+        // Load user data
+        async function loadUserData(uid) {
+            try {
+                const result = await getUserData(uid);
+                
+                if (result.success) {
+                    userData = result.data;
+                    
+                    // Fill form with existing data
+                    document.getElementById('fullName').value = userData.fullName || '';
+                    document.getElementById('email').value = userData.email || '';
+                    document.getElementById('location').value = userData.location || '';
+                    document.getElementById('phone').value = userData.phone || '';
+                    document.getElementById('bio').value = userData.bio || '';
+                    
+                    // Update header
+                    document.getElementById('header-name').textContent = userData.fullName;
+                    document.getElementById('header-email').textContent = userData.email;
+                    
+                    // Load profile photo if exists
+                    if (userData.photoURL) {
+                        document.getElementById('profile-photo-preview').src = userData.photoURL;
+                    }
+                    
+                    // Show user-type specific fields
+                    if (userData.userType === 'worker') {
+                        document.getElementById('worker-fields').classList.remove('hidden');
+                        
+                        // Load skills
+                        if (userData.skills && Array.isArray(userData.skills)) {
+                            userData.skills.forEach(skill => {
+                                const checkbox = document.querySelector(`.skill-checkbox[value="${skill}"]`);
+                                if (checkbox) {
+                                    checkbox.checked = true;
+                                } else {
+                                    // Add to other skills
+                                    const otherSkills = document.getElementById('other-skills');
+                                    if (otherSkills.value) {
+                                        otherSkills.value += ', ' + skill;
+                                    } else {
+                                        otherSkills.value = skill;
+                                    }
+                                }
+                            });
+                        }
+                        
+                        // Load experience
+                        if (userData.experience) {
+                            document.getElementById('experience').value = userData.experience;
+                        }
+                    } else if (userData.userType === 'employer') {
+                        document.getElementById('employer-fields').classList.remove('hidden');
+                        
+                        // Load business info
+                        document.getElementById('businessName').value = userData.businessName || '';
+                        document.getElementById('businessType').value = userData.businessType || '';
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading user data:', error);
+                alert('Error loading profile data. Please refresh the page.');
+            }
+        }
+        
+        // Photo input change
+        document.getElementById('photo-input').addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                // Validate file type
+                if (!file.type.startsWith('image/')) {
+                    alert('❌ Please select an image file');
+                    return;
+                }
+                
+                // Validate file size (max 5MB)
+                if (file.size > 5 * 1024 * 1024) {
+                    alert('❌ Image size should be less than 5MB');
+                    return;
+                }
+                
+                selectedPhotoFile = file;
+                
+                // Preview image
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    document.getElementById('profile-photo-preview').src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+                
+                // Show success message
+                const preview = document.getElementById('profile-photo-preview');
+                preview.classList.add('ring-4', 'ring-green-500');
+                setTimeout(() => {
+                    preview.classList.remove('ring-4', 'ring-green-500');
+                }, 2000);
+            }
+        });
+        
+        // Upload photo to Firebase Storage
+        async function uploadPhoto(file, userId) {
+            return new Promise((resolve, reject) => {
+                const storageRef = ref(storage, `profile-photos/${userId}/${Date.now()}_${file.name}`);
+                const uploadTask = uploadBytesResumable(storageRef, file);
+                
+                // Show progress
+                document.getElementById('upload-progress').classList.remove('hidden');
+                
+                uploadTask.on('state_changed',
+                    (snapshot) => {
+                        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                        document.getElementById('upload-percentage').textContent = Math.round(progress) + '%';
+                        document.getElementById('upload-bar').style.width = progress + '%';
+                    },
+                    (error) => {
+                        console.error('Upload error:', error);
+                        document.getElementById('upload-progress').classList.add('hidden');
+                        reject(error);
+                    },
+                    async () => {
+                        const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+                        document.getElementById('upload-progress').classList.add('hidden');
+                        resolve(downloadURL);
+                    }
+                );
+            });
+        }
+        
+        // Form submission
+        document.getElementById('profile-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const submitBtn = document.getElementById('save-btn');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Saving...';
+            submitBtn.disabled = true;
+            
+            try {
+                const updates = {
+                    fullName: document.getElementById('fullName').value.trim(),
+                    location: document.getElementById('location').value.trim(),
+                    phone: document.getElementById('phone').value.trim(),
+                    bio: document.getElementById('bio').value.trim(),
+                    updatedAt: new Date().toISOString()
+                };
+                
+                // Worker-specific fields
+                if (userData.userType === 'worker') {
+                    const selectedSkills = Array.from(document.querySelectorAll('.skill-checkbox:checked'))
+                        .map(cb => cb.value);
+                    
+                    const otherSkills = document.getElementById('other-skills').value
+                        .split(',')
+                        .map(s => s.trim())
+                        .filter(s => s);
+                    
+                    updates.skills = [...selectedSkills, ...otherSkills];
+                    updates.experience = document.getElementById('experience').value;
+                }
+                
+                // Employer-specific fields
+                if (userData.userType === 'employer') {
+                    updates.businessName = document.getElementById('businessName').value.trim();
+                    updates.businessType = document.getElementById('businessType').value;
+                }
+                
+                // Upload photo if selected
+                if (selectedPhotoFile) {
+                    const photoURL = await uploadPhoto(selectedPhotoFile, currentUser.uid);
+                    updates.photoURL = photoURL;
+                }
+                
+                // Update Firestore
+                const userRef = doc(db, 'users', currentUser.uid);
+                await updateDoc(userRef, updates);
+                
+                alert('✅ Profile updated successfully!');
+                
+                // Redirect back to dashboard
+                goBack();
+                
+            } catch (error) {
+                console.error('Error updating profile:', error);
+                alert('❌ Error updating profile: ' + error.message);
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }
+        });
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Jobs - WorkSetu</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gray-50">
+    
+    <!-- Navigation Bar -->
+    <nav class="bg-white shadow-md sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-4">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center space-x-2">
+                    <i class="fas fa-briefcase text-green-600 text-2xl"></i>
+                    <h1 class="text-2xl font-bold text-gray-800">WorkSetu</h1>
+                </div>
+                
+                <div class="hidden md:flex space-x-6">
+                    <a href="employer-dashboard.html" class="text-gray-600 hover:text-green-600 transition">
+                        <i class="fas fa-home mr-1"></i>Dashboard
+                    </a>
+                    <a href="post-job.html" class="text-gray-600 hover:text-green-600 transition">
+                        <i class="fas fa-plus-circle mr-1"></i>Post Job
+                    </a>
+                    <a href="my-jobs.html" class="text-green-600 font-semibold border-b-2 border-green-600 pb-1">
+                        <i class="fas fa-briefcase mr-1"></i>My Jobs
+                    </a>
+                    <a href="all-applications.html" class="text-gray-600 hover:text-green-600 transition">
+                        <i class="fas fa-users mr-1"></i>Applications
+                    </a>
+                </div>
+                
+                <div class="flex items-center space-x-4">
+                    <span class="text-gray-700" id="user-name">Loading...</span>
+                    <button id="logout-btn" class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition">
+                        <i class="fas fa-sign-out-alt mr-2"></i>Logout
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container mx-auto px-4 py-8">
+        
+        <!-- Header -->
+        <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+            <div class="flex justify-between items-center">
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-800 mb-2">
+                        <i class="fas fa-briefcase text-green-600 mr-2"></i>My Posted Jobs
+                    </h1>
+                    <p class="text-gray-600">Manage all your job postings</p>
+                </div>
+                <a href="post-job.html" class="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition shadow-lg">
+                    <i class="fas fa-plus-circle mr-2"></i>Post New Job
+                </a>
+            </div>
+        </div>
+
+        <!-- Filter & Search -->
+        <div class="bg-white rounded-lg shadow-md p-4 mb-6">
+            <div class="flex flex-wrap gap-4">
+                <div class="flex-1 min-w-[200px]">
+                    <input 
+                        type="text" 
+                        id="search-jobs" 
+                        placeholder="Search jobs by title, skill..." 
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                    >
+                </div>
+                <select id="filter-status" class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+                    <option value="all">All Jobs</option>
+                    <option value="active">Active</option>
+                    <option value="inactive">Inactive</option>
+                </select>
+                <select id="sort-jobs" class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+                    <option value="newest">Newest First</option>
+                    <option value="oldest">Oldest First</option>
+                    <option value="most-applications">Most Applications</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Jobs List -->
+        <div id="jobs-container" class="space-y-4">
+            <div class="text-center py-12">
+                <i class="fas fa-spinner fa-spin text-4xl text-green-600 mb-4"></i>
+                <p class="text-gray-600">Loading your jobs...</p>
+            </div>
+        </div>
+
+        <!-- Empty State -->
+        <div id="empty-state" class="hidden bg-white rounded-lg shadow-md p-12 text-center">
+            <i class="fas fa-briefcase text-gray-300 text-6xl mb-4"></i>
+            <h3 class="text-xl font-semibold text-gray-700 mb-2">No Jobs Posted Yet</h3>
+            <p class="text-gray-600 mb-6">Start by posting your first job!</p>
+            <a href="post-job.html" class="inline-block bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition">
+                <i class="fas fa-plus-circle mr-2"></i>Post Your First Job
+            </a>
+        </div>
+    </div>
+
+    <script type="module">
+        import { getCurrentUser, getUserData, logoutUser, checkAuthState } from '../js/auth.js';
+        import { db, collection, query, where, getDocs, orderBy, doc, updateDoc, deleteDoc } from '../js/firebase-config.js';
+        
+        let allJobs = [];
+        let currentUser = null;
+        
+        // Check authentication
+        checkAuthState(async (user) => {
+            if (!user) {
+                window.location.href = 'employer-login.html';
+                return;
+            }
+            
+            currentUser = user;
+            const result = await getUserData(user.uid);
+            
+            if (result.success) {
+                if (result.data.userType !== 'employer') {
+                    alert('⛔ Access Denied! This page is for employers only.');
+                    window.location.href = result.data.userType === 'worker' ? 'worker-dashboard.html' : 'login.html';
+                    return;
+                }
+                
+                document.getElementById('user-name').textContent = result.data.fullName;
+                await loadJobs(user.uid);
+            }
+        });
+        
+        // Logout
+        document.getElementById('logout-btn').addEventListener('click', async () => {
+            if (confirm('Are you sure you want to logout?')) {
+                await logoutUser();
+                window.location.href = '../index.html';
+            }
+        });
+        
+        // Load employer's jobs
+        async function loadJobs(employerId) {
+            try {
+                const jobsRef = collection(db, 'jobs');
+                const q = query(
+                    jobsRef,
+                    where('employerId', '==', employerId),
+                    orderBy('createdAt', 'desc')
+                );
+                
+                const querySnapshot = await getDocs(q);
+                allJobs = [];
+                
+                querySnapshot.forEach((doc) => {
+                    allJobs.push({
+                        id: doc.id,
+                        ...doc.data()
+                    });
+                });
+                
+                displayJobs(allJobs);
+                
+            } catch (error) {
+                console.error('Error loading jobs:', error);
+                document.getElementById('jobs-container').innerHTML = `
+                    <div class="bg-red-50 border border-red-200 rounded-lg p-4 text-center">
+                        <i class="fas fa-exclamation-circle text-red-500 text-2xl mb-2"></i>
+                        <p class="text-red-700">Error loading jobs. Please refresh the page.</p>
+                    </div>
+                `;
+            }
+        }
+        
+        // Display jobs
+        function displayJobs(jobs) {
+            const container = document.getElementById('jobs-container');
+            const emptyState = document.getElementById('empty-state');
+            
+            if (jobs.length === 0) {
+                container.classList.add('hidden');
+                emptyState.classList.remove('hidden');
+                return;
+            }
+            
+            container.classList.remove('hidden');
+            emptyState.classList.add('hidden');
+            
+            container.innerHTML = jobs.map(job => {
+                const isActive = job.status === 'active';
+                const applicationsCount = job.applicationsCount || 0;
+                
+                return `
+                    <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition">
+                        <div class="flex justify-between items-start mb-4">
+                            <div class="flex-1">
+                                <div class="flex items-center mb-2">
+                                    <h3 class="text-xl font-bold text-gray-800 mr-3">${job.title}</h3>
+                                    <span class="px-3 py-1 ${isActive ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600'} rounded-full text-sm font-semibold">
+                                        ${isActive ? 'Active' : 'Inactive'}
+                                    </span>
+                                </div>
+                                <p class="text-gray-600 text-sm mb-2">
+                                    <i class="fas fa-tools mr-2"></i>${job.skillRequired}
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+                            <div class="text-sm">
+                                <i class="fas fa-map-marker-alt text-gray-500 mr-2"></i>
+                                <span class="text-gray-700">${job.location}</span>
+                            </div>
+                            <div class="text-sm">
+                                <i class="fas fa-rupee-sign text-gray-500 mr-2"></i>
+                                <span class="text-gray-700">${job.salary}</span>
+                            </div>
+                            <div class="text-sm">
+                                <i class="fas fa-clock text-gray-500 mr-2"></i>
+                                <span class="text-gray-700">${job.jobType || 'Full Day'}</span>
+                            </div>
+                            <div class="text-sm">
+                                <i class="fas fa-users text-gray-500 mr-2"></i>
+                                <span class="text-gray-700 font-semibold">${applicationsCount} Applications</span>
+                            </div>
+                        </div>
+                        
+                        <p class="text-gray-600 text-sm mb-4 line-clamp-2">${job.description || 'No description'}</p>
+                        
+                        <div class="flex items-center justify-between pt-4 border-t border-gray-200">
+                            <div class="text-xs text-gray-500">
+                                <i class="fas fa-calendar mr-1"></i>
+                                Posted: ${new Date(job.createdAt).toLocaleDateString()}
+                            </div>
+                            
+                            <div class="flex space-x-2">
+                                ${applicationsCount > 0 ? `
+                                    <a href="view-applications.html?jobId=${job.id}" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition text-sm">
+                                        <i class="fas fa-eye mr-1"></i>View Applications (${applicationsCount})
+                                    </a>
+                                ` : `
+                                    <span class="px-4 py-2 bg-gray-100 text-gray-500 rounded-lg text-sm">
+                                        No Applications Yet
+                                    </span>
+                                `}
+                                <button onclick="editJob('${job.id}')" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition text-sm">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button onclick="deleteJob('${job.id}')" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition text-sm">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        // Edit job
+        window.editJob = function(jobId) {
+            window.location.href = `post-job.html?jobId=${jobId}`;
+        }
+        
+        // Delete job
+        window.deleteJob = async function(jobId) {
+            if (!confirm('Are you sure you want to delete this job? This action cannot be undone.')) {
+                return;
+            }
+            
+            try {
+                await deleteDoc(doc(db, 'jobs', jobId));
+                alert('✅ Job deleted successfully!');
+                await loadJobs(currentUser.uid);
+            } catch (error) {
+                console.error('Error deleting job:', error);
+                alert('❌ Error deleting job. Please try again.');
+            }
+        }
+        
+        // Search jobs
+        document.getElementById('search-jobs').addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+            const filtered = allJobs.filter(job => 
+                job.title.toLowerCase().includes(searchTerm) ||
+                job.skillRequired.toLowerCase().includes(searchTerm) ||
+                job.location.toLowerCase().includes(searchTerm)
+            );
+            displayJobs(filtered);
+        });
+        
+        // Filter by status
+        document.getElementById('filter-status').addEventListener('change', (e) => {
+            const status = e.target.value;
+            const filtered = status === 'all' ? allJobs : allJobs.filter(job => job.status === status);
+            displayJobs(filtered);
+        });
+        
+        // Sort jobs
+        document.getElementById('sort-jobs').addEventListener('change', (e) => {
+            const sortBy = e.target.value;
+            let sorted = [...allJobs];
+            
+            if (sortBy === 'newest') {
+                sorted.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+            } else if (sortBy === 'oldest') {
+                sorted.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+            } else if (sortBy === 'most-applications') {
+                sorted.sort((a, b) => (b.applicationsCount || 0) - (a.applicationsCount || 0));
+            }
+            
+            displayJobs(sorted);
+        });
+    </script>
+
+</body>
+</html>

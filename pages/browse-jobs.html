@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Browse Jobs - WorkSetu</title>
+    <!-- EmailJS SDK -->
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3B82F6',
+                        secondary: '#10B981',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50">
+    
+    <!-- Navigation Bar -->
+    <nav class="bg-white shadow-md sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-4">
+            <div class="flex justify-between items-center">
+                <!-- Logo -->
+                <div class="flex items-center space-x-2">
+                    <i class="fas fa-briefcase text-primary text-2xl"></i>
+                    <h1 class="text-2xl font-bold text-gray-800">WorkSetu</h1>
+                </div>
+                
+                <!-- Navigation Links -->
+                <div class="hidden md:flex space-x-6">
+                    <a href="worker-dashboard.html" class="text-gray-600 hover:text-primary transition">
+                        <i class="fas fa-home mr-1"></i>Dashboard
+                    </a>
+                    <a href="#" class="text-primary font-semibold border-b-2 border-primary pb-1">
+                        <i class="fas fa-search mr-1"></i>Browse Jobs
+                    </a>
+                    <a href="my-applications.html" class="text-gray-600 hover:text-primary transition">
+                        <i class="fas fa-file-alt mr-1"></i>My Applications
+                    </a>
+                </div>
+                
+                <!-- User Menu -->
+                <div class="flex items-center space-x-4">
+                    <div class="relative">
+                        <button id="profile-menu-btn" class="flex items-center space-x-2 text-gray-700 hover:text-primary">
+                            <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                                <i class="fas fa-user text-primary"></i>
+                            </div>
+                            <span id="user-name-nav" class="hidden md:block font-medium">Loading...</span>
+                            <i class="fas fa-chevron-down text-sm"></i>
+                        </button>
+                        
+                        <!-- Dropdown Menu -->
+                        <div id="profile-dropdown" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2">
+                            <a href="worker-dashboard.html" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">
+                                <i class="fas fa-home mr-2"></i>Dashboard
+                            </a>
+                            <a href="#profile" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">
+                                <i class="fas fa-user mr-2"></i>My Profile
+                            </a>
+                            <hr class="my-2">
+                            <button id="logout-btn" class="w-full text-left px-4 py-2 text-red-600 hover:bg-red-50">
+                                <i class="fas fa-sign-out-alt mr-2"></i>Logout
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Mobile Menu Button -->
+                <button class="md:hidden text-gray-600" id="mobile-menu-btn">
+                    <i class="fas fa-bars text-2xl"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container mx-auto px-4 py-8">
+        
+        <!-- Page Header -->
+        <div class="bg-gradient-to-r from-blue-500 to-blue-700 rounded-lg shadow-md p-6 text-white mb-6">
+            <h1 class="text-3xl font-bold mb-2">Find Your Next Job 🔍</h1>
+            <p class="text-blue-100">Discover opportunities that match your skills and location</p>
+        </div>
+
+        <div class="grid md:grid-cols-4 gap-6">
+            
+            <!-- Left Sidebar - Filters -->
+            <div class="md:col-span-1">
+                <div class="bg-white rounded-lg shadow-md p-6 sticky top-24">
+                    <h2 class="text-lg font-bold text-gray-800 mb-4">
+                        <i class="fas fa-filter text-primary mr-2"></i>Filters
+                    </h2>
+                    
+                    <!-- Search by Keyword -->
+                    <div class="mb-6">
+                        <label class="block text-gray-700 mb-2 font-medium text-sm">Search</label>
+                        <input 
+                            type="text" 
+                            id="search-keyword" 
+                            placeholder="Job title, skill..." 
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-sm"
+                        >
+                    </div>
+                    
+                    <!-- Skill Filter -->
+                    <div class="mb-6">
+                        <label class="block text-gray-700 mb-2 font-medium text-sm">Skill</label>
+                        <select 
+                            id="filter-skill" 
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-sm"
+                        >
+                            <option value="">All Skills</option>
+                            <option value="Mason">Mason</option>
+                            <option value="Electrician">Electrician</option>
+                            <option value="Plumber">Plumber</option>
+                            <option value="Painter">Painter</option>
+                            <option value="Carpenter">Carpenter</option>
+                            <option value="Helper">Helper</option>
+                            <option value="Welder">Welder</option>
+                            <option value="Tile Worker">Tile Worker</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Location Filter -->
+                    <div class="mb-6">
+                        <label class="block text-gray-700 mb-2 font-medium text-sm">Location</label>
+                        <input 
+                            type="text" 
+                            id="filter-location" 
+                            placeholder="City or area" 
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-sm"
+                        >
+                    </div>
+                    
+                    <!-- Job Type Filter -->
+                    <div class="mb-6">
+                        <label class="block text-gray-700 mb-2 font-medium text-sm">Job Type</label>
+                        <select 
+                            id="filter-job-type" 
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-sm"
+                        >
+                            <option value="">All Types</option>
+                            <option value="Full Day">Full Day</option>
+                            <option value="Half Day">Half Day</option>
+                            <option value="Hourly">Hourly</option>
+                            <option value="Contract">Contract</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Salary Range Filter -->
+                    <div class="mb-6">
+                        <label class="block text-gray-700 mb-2 font-medium text-sm">Min Salary (₹/day)</label>
+                        <input 
+                            type="number" 
+                            id="filter-salary" 
+                            placeholder="e.g., 500" 
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-sm"
+                        >
+                    </div>
+                    
+                    <!-- Sort By -->
+                    <div class="mb-6">
+                        <label class="block text-gray-700 mb-2 font-medium text-sm">Sort By</label>
+                        <select 
+                            id="sort-by" 
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-sm"
+                        >
+                            <option value="match">Best Match</option>
+                            <option value="recent">Most Recent</option>
+                            <option value="salary-high">Highest Salary</option>
+                            <option value="salary-low">Lowest Salary</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Filter Buttons -->
+                    <div class="space-y-2">
+                        <button 
+                            id="apply-filters-btn"
+                            class="w-full bg-primary text-white py-2 rounded-lg hover:bg-blue-700 transition font-semibold text-sm"
+                        >
+                            <i class="fas fa-search mr-2"></i>Apply Filters
+                        </button>
+                        <button 
+                            id="clear-filters-btn"
+                            class="w-full bg-white border border-gray-300 text-gray-700 py-2 rounded-lg hover:bg-gray-50 transition text-sm"
+                        >
+                            <i class="fas fa-times mr-2"></i>Clear All
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Right Content - Job Listings -->
+            <div class="md:col-span-3">
+                
+                <!-- Results Header -->
+                <div class="bg-white rounded-lg shadow-md p-4 mb-4">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <h2 class="text-lg font-semibold text-gray-800">
+                                <span id="job-count">0</span> Jobs Found
+                            </h2>
+                            <p class="text-sm text-gray-600" id="filter-summary">Showing all jobs</p>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <button id="grid-view" class="p-2 text-gray-600 hover:text-primary">
+                                <i class="fas fa-th-large"></i>
+                            </button>
+                            <button id="list-view" class="p-2 text-primary">
+                                <i class="fas fa-list"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Job Listings -->
+                <div id="jobs-container" class="space-y-4">
+                    <!-- Loading state -->
+                    <div class="text-center py-12">
+                        <i class="fas fa-spinner fa-spin text-4xl text-primary mb-4"></i>
+                        <p class="text-gray-600">Loading jobs...</p>
+                    </div>
+                </div>
+                
+                <!-- No Results -->
+                <div id="no-results" class="hidden bg-white rounded-lg shadow-md p-12 text-center">
+                    <i class="fas fa-search text-6xl text-gray-300 mb-4"></i>
+                    <h3 class="text-xl font-semibold text-gray-800 mb-2">No Jobs Found</h3>
+                    <p class="text-gray-600 mb-4">Try adjusting your filters or search criteria</p>
+                    <button 
+                        onclick="clearAllFilters()"
+                        class="bg-primary text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition"
+                    >
+                        Clear Filters
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Job Details Modal (will be shown when clicking on a job) -->
+    <div id="job-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-lg shadow-xl max-w-3xl w-full max-h-[90vh] overflow-y-auto">
+            <div class="p-6" id="modal-content">
+                <!-- Job details will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script type="module">
+        import { getCurrentUser, getUserData, logoutUser, checkAuthState } from '../js/auth.js';
+        import { db, collection, query, where, getDocs, orderBy, limit } from '../js/firebase-config.js';
+        import { submitApplication } from '../js/applications.js';
+        import { initEmailJS } from '../js/email-service.js'; initEmailJS();
+        
+        let currentUserData = null;
+        let allJobs = [];
+        let filteredJobs = [];
+        
+        // Protect this page - only workers can access
+        checkAuthState(async (user) => {
+            if (!user) {
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            const result = await getUserData(user.uid);
+            if (result.success) {
+                currentUserData = result.data;
+                
+                if (currentUserData.userType !== 'worker') {
+                    alert('This page is only for workers!');
+                    window.location.href = 'employer-dashboard.html';
+                    return;
+                }
+                
+                document.getElementById('user-name-nav').textContent = currentUserData.fullName;
+                
+                // Load all jobs
+                await loadAllJobs();
+            }
+        });
+        
+        // Profile dropdown
+        document.getElementById('profile-menu-btn').addEventListener('click', () => {
+            document.getElementById('profile-dropdown').classList.toggle('hidden');
+        });
+        
+        document.addEventListener('click', (e) => {
+            const dropdown = document.getElementById('profile-dropdown');
+            const btn = document.getElementById('profile-menu-btn');
+            if (!dropdown.contains(e.target) && !btn.contains(e.target)) {
+                dropdown.classList.add('hidden');
+            }
+        });
+        
+        // Logout
+        document.getElementById('logout-btn').addEventListener('click', async () => {
+            if (confirm('Are you sure you want to logout?')) {
+                const result = await logoutUser();
+                if (result.success) {
+                    window.location.href = '../index.html';
+                }
+            }
+        });
+        
+        // Load all jobs from Firestore
+        async function loadAllJobs() {
+            try {
+                const jobsRef = collection(db, 'jobs');
+                const q = query(jobsRef, where('status', '==', 'active'), orderBy('createdAt', 'desc'));
+                
+                const querySnapshot = await getDocs(q);
+                
+                allJobs = [];
+                querySnapshot.forEach((doc) => {
+                    const job = doc.data();
+                    const matchScore = calculateMatchScore(job, currentUserData);
+                    allJobs.push({
+                        id: doc.id,
+                        ...job,
+                        matchScore
+                    });
+                });
+                
+                filteredJobs = [...allJobs];
+                displayJobs(filteredJobs);
+                
+            } catch (error) {
+                console.error('Error loading jobs:', error);
+                document.getElementById('jobs-container').innerHTML = `
+                    <div class="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
+                        <i class="fas fa-exclamation-circle text-red-500 text-3xl mb-3"></i>
+                        <p class="text-red-700">Error loading jobs. Please refresh the page.</p>
+                    </div>
+                `;
+            }
+        }
+        
+        // Calculate match score
+        function calculateMatchScore(job, userData) {
+            let score = 0;
+            
+            if (userData.skills && userData.skills.length > 0) {
+                const hasMatchingSkill = userData.skills.some(skill => 
+                    skill.toLowerCase() === job.skillRequired.toLowerCase()
+                );
+                score += hasMatchingSkill ? 40 : 10;
+            }
+            
+            if (job.location && userData.location) {
+                const jobLoc = job.location.toLowerCase();
+                const userLoc = userData.location.toLowerCase();
+                if (jobLoc.includes(userLoc) || userLoc.includes(jobLoc)) {
+                    score += 30;
+                } else {
+                    const jobCity = jobLoc.split(',')[0].trim();
+                    const userCity = userLoc.split(',')[0].trim();
+                    if (jobCity === userCity) score += 15;
+                }
+            }
+            
+            if (job.experienceRequired && userData.experience) {
+                if (job.experienceRequired === 'Any' || job.experienceRequired === userData.experience) {
+                    score += 20;
+                } else {
+                    score += 10;
+                }
+            } else {
+                score += 10;
+            }
+            
+            const now = new Date();
+            const jobDate = new Date(job.createdAt);
+            const hoursDiff = (now - jobDate) / (1000 * 60 * 60);
+            if (hoursDiff < 24) score += 10;
+            else if (hoursDiff < 72) score += 5;
+            
+            return Math.min(score, 99);
+        }
+        
+        // Display jobs
+        function displayJobs(jobs) {
+            const container = document.getElementById('jobs-container');
+            const noResults = document.getElementById('no-results');
+            
+            document.getElementById('job-count').textContent = jobs.length;
+            
+            if (jobs.length === 0) {
+                container.classList.add('hidden');
+                noResults.classList.remove('hidden');
+                return;
+            }
+            
+            container.classList.remove('hidden');
+            noResults.classList.add('hidden');
+            
+            container.innerHTML = jobs.map(job => createJobCard(job)).join('');
+        }
+        
+        // Create job card
+        function createJobCard(job) {
+            const matchColor = job.matchScore >= 70 ? 'bg-green-100 text-green-700' : 
+                               job.matchScore >= 50 ? 'bg-yellow-100 text-yellow-700' : 
+                               'bg-gray-100 text-gray-700';
+            
+            return `
+                <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition cursor-pointer" onclick="showJobDetails('${job.id}')">
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="flex-1">
+                            <h3 class="text-xl font-semibold text-gray-800 mb-2">${job.title}</h3>
+                            <p class="text-gray-600 mb-2">
+                                <i class="fas fa-building mr-2"></i>${job.businessName || job.employerName}
+                            </p>
+                        </div>
+                        <span class="${matchColor} px-3 py-1 rounded-full text-sm font-semibold">
+                            ${job.matchScore}% Match
+                        </span>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4 text-sm">
+                        <div class="text-gray-600">
+                            <i class="fas fa-map-marker-alt text-primary mr-1"></i>
+                            ${job.location}
+                        </div>
+                        <div class="text-green-600 font-semibold">
+                            <i class="fas fa-rupee-sign mr-1"></i>
+                            ${job.salary}
+                        </div>
+                        <div class="text-gray-600">
+                            <i class="fas fa-clock mr-1"></i>
+                            ${job.jobType}
+                        </div>
+                        <div class="text-gray-600">
+                            <i class="far fa-clock mr-1"></i>
+                            ${formatTimeAgo(job.createdAt)}
+                        </div>
+                    </div>
+                    
+                    <p class="text-gray-700 mb-4 line-clamp-2">${job.description}</p>
+                    
+                    <div class="flex flex-wrap gap-2 mb-4">
+                        <span class="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-medium">
+                            ${job.skillRequired}
+                        </span>
+                        ${job.workersNeeded > 1 ? `<span class="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-xs font-medium">
+                            ${job.workersNeeded} positions
+                        </span>` : ''}
+                    </div>
+                    
+                    <div class="flex space-x-3">
+                        <button onclick="applyToJob('${job.id}'); event.stopPropagation();" class="flex-1 bg-primary text-white py-3 rounded-lg hover:bg-blue-700 transition font-semibold">
+                            <i class="fas fa-paper-plane mr-2"></i>Apply Now
+                        </button>
+                        <button onclick="showJobDetails('${job.id}'); event.stopPropagation();" class="px-6 py-3 border-2 border-primary text-primary rounded-lg hover:bg-blue-50 transition font-semibold">
+                            <i class="fas fa-info-circle mr-2"></i>Details
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+        
+        // Show job details modal
+        window.showJobDetails = function(jobId) {
+            const job = allJobs.find(j => j.id === jobId);
+            if (!job) return;
+            
+            const modal = document.getElementById('job-modal');
+            const content = document.getElementById('modal-content');
+            
+            content.innerHTML = `
+                <div class="flex justify-between items-start mb-6">
+                    <div>
+                        <h2 class="text-2xl font-bold text-gray-800 mb-2">${job.title}</h2>
+                        <p class="text-gray-600">
+                            <i class="fas fa-building mr-2"></i>${job.businessName || job.employerName}
+                        </p>
+                    </div>
+                    <button onclick="closeModal()" class="text-gray-500 hover:text-gray-700">
+                        <i class="fas fa-times text-2xl"></i>
+                    </button>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-4 mb-6">
+                    <div class="bg-blue-50 p-4 rounded-lg">
+                        <p class="text-sm text-gray-600 mb-1">Salary Range</p>
+                        <p class="text-lg font-semibold text-green-600">${job.salary}</p>
+                    </div>
+                    <div class="bg-green-50 p-4 rounded-lg">
+                        <p class="text-sm text-gray-600 mb-1">Match Score</p>
+                        <p class="text-lg font-semibold text-primary">${job.matchScore}%</p>
+                    </div>
+                </div>
+                
+                <div class="space-y-4 mb-6">
+                    <div>
+                        <h3 class="font-semibold text-gray-800 mb-2"><i class="fas fa-align-left text-primary mr-2"></i>Job Description</h3>
+                        <p class="text-gray-700">${job.description}</p>
+                    </div>
+                    
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <div>
+                            <p class="text-sm text-gray-600 mb-1">Location</p>
+                            <p class="font-medium"><i class="fas fa-map-marker-alt text-primary mr-2"></i>${job.location}</p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-600 mb-1">Job Type</p>
+                            <p class="font-medium"><i class="fas fa-clock text-primary mr-2"></i>${job.jobType}</p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-600 mb-1">Skill Required</p>
+                            <p class="font-medium"><i class="fas fa-tools text-primary mr-2"></i>${job.skillRequired}</p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-600 mb-1">Workers Needed</p>
+                            <p class="font-medium"><i class="fas fa-users text-primary mr-2"></i>${job.workersNeeded}</p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-600 mb-1">Experience Required</p>
+                            <p class="font-medium"><i class="fas fa-award text-primary mr-2"></i>${job.experienceRequired || 'Any'}</p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-600 mb-1">Start Date</p>
+                            <p class="font-medium"><i class="fas fa-calendar text-primary mr-2"></i>${new Date(job.startDate).toLocaleDateString()}</p>
+                        </div>
+                    </div>
+                    
+                    ${job.duration ? `
+                    <div>
+                        <p class="text-sm text-gray-600 mb-1">Duration</p>
+                        <p class="font-medium"><i class="fas fa-hourglass-half text-primary mr-2"></i>${job.duration}</p>
+                    </div>
+                    ` : ''}
+                    
+                    ${job.additionalRequirements ? `
+                    <div>
+                        <h3 class="font-semibold text-gray-800 mb-2"><i class="fas fa-list text-primary mr-2"></i>Additional Requirements</h3>
+                        <p class="text-gray-700">${job.additionalRequirements}</p>
+                    </div>
+                    ` : ''}
+                    
+                    <div class="bg-gray-50 p-4 rounded-lg">
+                        <h3 class="font-semibold text-gray-800 mb-2"><i class="fas fa-phone text-primary mr-2"></i>Contact Information</h3>
+                        <p class="text-gray-700">Contact Person: ${job.contactPerson || 'Not specified'}</p>
+                        <p class="text-gray-700">Phone: ${job.contactNumber}</p>
+                    </div>
+                </div>
+                
+                <div class="flex space-x-3">
+                    <button onclick="applyToJob('${job.id}')" class="flex-1 bg-primary text-white py-3 rounded-lg hover:bg-blue-700 transition font-semibold">
+                        <i class="fas fa-paper-plane mr-2"></i>Apply for this Job
+                    </button>
+                    <button onclick="closeModal()" class="px-6 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition">
+                        Close
+                    </button>
+                </div>
+            `;
+            
+            modal.classList.remove('hidden');
+        }
+        
+        window.closeModal = function() {
+            document.getElementById('job-modal').classList.add('hidden');
+        }
+        
+        // Apply filters
+        document.getElementById('apply-filters-btn').addEventListener('click', applyFilters);
+        document.getElementById('clear-filters-btn').addEventListener('click', clearAllFilters);
+        
+        // Auto-apply on enter in search
+        document.getElementById('search-keyword').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') applyFilters();
+        });
+        
+        function applyFilters() {
+            const keyword = document.getElementById('search-keyword').value.toLowerCase();
+            const skill = document.getElementById('filter-skill').value;
+            const location = document.getElementById('filter-location').value.toLowerCase();
+            const jobType = document.getElementById('filter-job-type').value;
+            const minSalary = parseInt(document.getElementById('filter-salary').value) || 0;
+            const sortBy = document.getElementById('sort-by').value;
+            
+            filteredJobs = allJobs.filter(job => {
+                if (keyword && !job.title.toLowerCase().includes(keyword) && !job.description.toLowerCase().includes(keyword)) return false;
+                if (skill && job.skillRequired !== skill) return false;
+                if (location && !job.location.toLowerCase().includes(location)) return false;
+                if (jobType && job.jobType !== jobType) return false;
+                if (minSalary && job.salaryMin < minSalary) return false;
+                return true;
+            });
+            
+            // Sort
+            if (sortBy === 'match') {
+                filteredJobs.sort((a, b) => b.matchScore - a.matchScore);
+            } else if (sortBy === 'recent') {
+                filteredJobs.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+            } else if (sortBy === 'salary-high') {
+                filteredJobs.sort((a, b) => b.salaryMax - a.salaryMax);
+            } else if (sortBy === 'salary-low') {
+                filteredJobs.sort((a, b) => a.salaryMin - b.salaryMin);
+            }
+            
+            displayJobs(filteredJobs);
+            updateFilterSummary();
+        }
+        
+        window.clearAllFilters = function() {
+            document.getElementById('search-keyword').value = '';
+            document.getElementById('filter-skill').value = '';
+            document.getElementById('filter-location').value = '';
+            document.getElementById('filter-job-type').value = '';
+            document.getElementById('filter-salary').value = '';
+            document.getElementById('sort-by').value = 'match';
+            
+            filteredJobs = [...allJobs];
+            filteredJobs.sort((a, b) => b.matchScore - a.matchScore);
+            displayJobs(filteredJobs);
+            document.getElementById('filter-summary').textContent = 'Showing all jobs';
+        }
+        
+        function updateFilterSummary() {
+            const activeFilters = [];
+            if (document.getElementById('search-keyword').value) activeFilters.push('keyword');
+            if (document.getElementById('filter-skill').value) activeFilters.push('skill');
+            if (document.getElementById('filter-location').value) activeFilters.push('location');
+            if (document.getElementById('filter-job-type').value) activeFilters.push('type');
+            if (document.getElementById('filter-salary').value) activeFilters.push('salary');
+            
+            if (activeFilters.length > 0) {
+                document.getElementById('filter-summary').textContent = `Filtered by: ${activeFilters.join(', ')}`;
+            } else {
+                document.getElementById('filter-summary').textContent = 'Showing all jobs';
+            }
+        }
+        
+        function formatTimeAgo(timestamp) {
+            if (!timestamp) return 'Just now';
+            const date = new Date(timestamp);
+            const now = new Date();
+            const diffMs = now - date;
+            const diffMins = Math.floor(diffMs / 60000);
+            
+            if (diffMins < 1) return 'Just now';
+            if (diffMins < 60) return `${diffMins}m ago`;
+            
+            const diffHours = Math.floor(diffMins / 60);
+            if (diffHours < 24) return `${diffHours}h ago`;
+            
+            const diffDays = Math.floor(diffHours / 24);
+            if (diffDays < 7) return `${diffDays}d ago`;
+            
+            return date.toLocaleDateString();
+        }
+        
+        window.applyToJob = async function(jobId) {
+            if (!currentUserData) {
+                alert('Please login to apply');
+                return;
+            }
+            
+            const job = allJobs.find(j => j.id === jobId);
+            if (!job) {
+                alert('Job not found');
+                return;
+            }
+            
+            // Show application modal
+            const message = prompt(`Applying to: ${job.title}\n\nWhy are you a good fit for this job? (Optional message to employer):`);
+            
+            if (message === null) return; // User cancelled
+            
+            // Show loading
+            const originalText = event.target.innerHTML;
+            event.target.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Submitting...';
+            event.target.disabled = true;
+            
+            try {
+                const { getAuth } = await import('https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js');
+const firebaseAuth = getAuth();
+const currentUid = firebaseAuth.currentUser?.uid;
+
+if (!currentUid) {
+    alert('❌ Session expired. Please login again.');
+    window.location.href = 'worker-login.html';
+    return;
+}
+
+const result = await submitApplication(
+    jobId,
+    currentUid,
+    currentUserData,
+    message
+);
+                
+                if (result.success) {
+                    alert('✅ Application submitted successfully!\n\nThe employer will review your application and contact you if selected.');
+                    // Optionally redirect to applications page
+                    if (confirm('Would you like to view your applications?')) {
+                        window.location.href = 'my-applications.html';
+                    }
+                } else {
+                    alert('❌ ' + result.error);
+                    event.target.innerHTML = originalText;
+                    event.target.disabled = false;
+                }
+            } catch (error) {
+                console.error('Application error:', error);
+                alert('Failed to submit application. Please try again.');
+                event.target.innerHTML = originalText;
+                event.target.disabled = false;
+            }
+        }
+    </script>
+
+</body>
+</html>

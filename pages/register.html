@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - WorkSetu</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gray-100">
+
+    <!-- Navigation -->
+    <nav class="bg-white shadow-md">
+        <div class="container mx-auto px-4 py-4">
+            <div class="flex justify-between items-center">
+                <a href="../index.html" class="flex items-center space-x-2">
+                    <i class="fas fa-briefcase text-blue-600 text-2xl"></i>
+                    <h1 class="text-2xl font-bold text-gray-800">WorkSetu</h1>
+                </a>
+                <a href="../index.html" class="text-gray-600 hover:text-blue-600">
+                    <i class="fas fa-home mr-2"></i>Home
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mx-auto px-4 py-12">
+        <div class="max-w-2xl mx-auto bg-white rounded-lg shadow-lg p-8">
+
+            <!-- Header -->
+            <div class="text-center mb-8">
+                <h2 class="text-3xl font-bold text-gray-800">Create Account</h2>
+                <p class="text-gray-600 mt-2">Join WorkSetu today</p>
+            </div>
+
+            <!-- Step Indicator -->
+            <div class="flex items-center justify-center mb-8">
+                <div class="flex items-center">
+                    <div id="step1-indicator" class="w-10 h-10 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-sm">1</div>
+                    <span class="ml-2 text-sm font-medium text-blue-600">Fill Details</span>
+                </div>
+                <div class="w-16 h-1 bg-gray-300 mx-4" id="step-line"></div>
+                <div class="flex items-center">
+                    <div id="step2-indicator" class="w-10 h-10 rounded-full bg-gray-300 text-gray-500 flex items-center justify-center font-bold text-sm">2</div>
+                    <span class="ml-2 text-sm font-medium text-gray-500" id="step2-label">Verify OTP</span>
+                </div>
+            </div>
+
+            <!-- STEP 1: Registration Form -->
+            <div id="step1-form">
+
+                <!-- User Type Selection -->
+                <div class="mb-6">
+                    <label class="block text-gray-700 mb-3 font-medium">I am a:</label>
+                    <div class="grid grid-cols-2 gap-4">
+                        <button type="button" id="worker-btn"
+                            class="user-type-btn p-6 border-2 border-gray-300 rounded-lg hover:border-blue-500 transition text-center">
+                            <i class="fas fa-user-hard-hat text-4xl text-blue-600 mb-3"></i>
+                            <p class="font-semibold text-gray-800">Worker</p>
+                            <p class="text-sm text-gray-600 mt-1">Looking for jobs</p>
+                        </button>
+                        <button type="button" id="employer-btn"
+                            class="user-type-btn p-6 border-2 border-gray-300 rounded-lg hover:border-green-500 transition text-center">
+                            <i class="fas fa-building text-4xl text-green-600 mb-3"></i>
+                            <p class="font-semibold text-gray-800">Employer</p>
+                            <p class="text-sm text-gray-600 mt-1">Hiring workers</p>
+                        </button>
+                    </div>
+                </div>
+
+                <form id="register-form" class="space-y-5">
+                    <input type="hidden" id="user-type" value="">
+
+                    <!-- Full Name -->
+                    <div>
+                        <label class="block text-gray-700 mb-2 font-medium">Full Name *</label>
+                        <input type="text" id="full-name" placeholder="Enter your full name"
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                    </div>
+
+                    <!-- Mobile Number -->
+                    <div>
+                        <label class="block text-gray-700 mb-2 font-medium">Mobile Number *</label>
+                        <div class="flex">
+                            <span class="inline-flex items-center px-4 bg-gray-200 border border-r-0 border-gray-300 rounded-l-lg text-gray-700 font-medium">+91</span>
+                            <input type="tel" id="mobile" placeholder="Enter 10 digit mobile number"
+                                class="flex-1 px-4 py-3 border border-gray-300 rounded-r-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                pattern="[0-9]{10}" maxlength="10" required>
+                        </div>
+                        <p class="text-xs text-gray-500 mt-1"><i class="fas fa-info-circle mr-1"></i>OTP will be sent to this number for verification</p>
+                    </div>
+
+                    <!-- Email -->
+                    <div>
+                        <label class="block text-gray-700 mb-2 font-medium">Email Address *</label>
+                        <input type="email" id="email" placeholder="Enter your email address"
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                    </div>
+
+                    <!-- Password -->
+                    <div>
+                        <label class="block text-gray-700 mb-2 font-medium">Password *</label>
+                        <div class="relative">
+                            <input type="password" id="password" placeholder="Min 6 characters"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                minlength="6" required>
+                            <button type="button" onclick="togglePassword('password', 'pass-eye')"
+                                class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700">
+                                <i class="fas fa-eye" id="pass-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Location -->
+                    <div>
+                        <label class="block text-gray-700 mb-2 font-medium">City/Location *</label>
+                        <input type="text" id="location" placeholder="e.g., Mumbai, Delhi"
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                    </div>
+
+                    <!-- Worker Fields -->
+                    <div id="worker-fields" class="hidden space-y-5">
+                        <div>
+                            <label class="block text-gray-700 mb-2 font-medium">Skills *</label>
+                            <div class="grid grid-cols-2 gap-3">
+                                <label class="flex items-center space-x-2"><input type="checkbox" value="Mason" class="skill-checkbox"><span>Mason</span></label>
+                                <label class="flex items-center space-x-2"><input type="checkbox" value="Electrician" class="skill-checkbox"><span>Electrician</span></label>
+                                <label class="flex items-center space-x-2"><input type="checkbox" value="Plumber" class="skill-checkbox"><span>Plumber</span></label>
+                                <label class="flex items-center space-x-2"><input type="checkbox" value="Painter" class="skill-checkbox"><span>Painter</span></label>
+                                <label class="flex items-center space-x-2"><input type="checkbox" value="Carpenter" class="skill-checkbox"><span>Carpenter</span></label>
+                                <label class="flex items-center space-x-2"><input type="checkbox" value="Helper" class="skill-checkbox"><span>Helper</span></label>
+                            </div>
+                            <input type="text" id="other-skills" placeholder="Other skills (comma separated)"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 mt-3">
+                        </div>
+                        <div>
+                            <label class="block text-gray-700 mb-2 font-medium">Experience (Years)</label>
+                            <select id="experience" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <option value="0-1">0-1 years</option>
+                                <option value="1-3">1-3 years</option>
+                                <option value="3-5">3-5 years</option>
+                                <option value="5+">5+ years</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Employer Fields -->
+                    <div id="employer-fields" class="hidden space-y-5">
+                        <div>
+                            <label class="block text-gray-700 mb-2 font-medium">Business/Company Name *</label>
+                            <input type="text" id="business-name" placeholder="Enter business name"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-gray-700 mb-2 font-medium">Business Type *</label>
+                            <select id="business-type" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <option value="">Select business type</option>
+                                <option value="construction">Construction</option>
+                                <option value="manufacturing">Manufacturing</option>
+                                <option value="household">Household</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- reCAPTCHA container (invisible) -->
+                    <div id="recaptcha-container"></div>
+
+                    <!-- Send OTP Button -->
+                    <button type="submit" id="send-otp-btn"
+                        class="w-full bg-blue-600 text-white py-3 px-4 rounded-lg font-semibold hover:bg-blue-700 transition shadow-lg" disabled>
+                        <i class="fas fa-mobile-alt mr-2"></i>Send OTP to Verify
+                    </button>
+                </form>
+
+                <div class="mt-4 text-center">
+                    <p class="text-gray-600 text-sm">Already have an account?
+                        <a href="worker-login.html" id="login-link" class="text-blue-600 font-semibold hover:underline">Login</a>
+                    </p>
+                </div>
+            </div>
+
+            <!-- STEP 2: OTP Verification -->
+            <div id="step2-otp" class="hidden">
+                <div class="text-center mb-6">
+                    <div class="bg-green-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-mobile-alt text-green-600 text-3xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800">Verify Your Number</h3>
+                    <p class="text-gray-600 mt-2">OTP sent to <span id="otp-phone-display" class="font-semibold text-blue-600"></span></p>
+                </div>
+
+                <!-- OTP Input -->
+                <div class="mb-6">
+                    <label class="block text-gray-700 mb-2 font-medium text-center">Enter 6-digit OTP</label>
+                    <div class="flex justify-center gap-3" id="otp-boxes">
+                        <input type="tel" maxlength="1" class="otp-input w-12 h-12 text-center text-xl font-bold border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200" />
+                        <input type="tel" maxlength="1" class="otp-input w-12 h-12 text-center text-xl font-bold border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200" />
+                        <input type="tel" maxlength="1" class="otp-input w-12 h-12 text-center text-xl font-bold border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200" />
+                        <input type="tel" maxlength="1" class="otp-input w-12 h-12 text-center text-xl font-bold border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200" />
+                        <input type="tel" maxlength="1" class="otp-input w-12 h-12 text-center text-xl font-bold border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200" />
+                        <input type="tel" maxlength="1" class="otp-input w-12 h-12 text-center text-xl font-bold border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200" />
+                    </div>
+                </div>
+
+                <!-- Timer -->
+                <div class="text-center mb-6">
+                    <p class="text-gray-600 text-sm" id="otp-timer">OTP expires in <span id="timer-count" class="font-bold text-red-500">60</span> seconds</p>
+                    <button id="resend-otp-btn" class="hidden text-blue-600 hover:underline text-sm font-medium mt-1" onclick="resendOTP()">
+                        <i class="fas fa-redo mr-1"></i>Resend OTP
+                    </button>
+                </div>
+
+                <!-- Verify Button -->
+                <button id="verify-otp-btn" onclick="verifyAndRegister()"
+                    class="w-full bg-green-600 text-white py-3 px-4 rounded-lg font-semibold hover:bg-green-700 transition shadow-lg">
+                    <i class="fas fa-check-circle mr-2"></i>Verify & Create Account
+                </button>
+
+                <!-- Back Button -->
+                <button onclick="goBackToForm()"
+                    class="w-full mt-3 bg-gray-100 text-gray-700 py-3 px-4 rounded-lg font-semibold hover:bg-gray-200 transition">
+                    <i class="fas fa-arrow-left mr-2"></i>Back to Edit Details
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <script type="module">
+        import { registerUser, redirectToDashboard, logoutUser } from '../js/auth.js';
+        import { initRecaptcha, sendOTP, verifyOTP, resetOTPState } from '../js/otp-service.js';
+        import { db, doc, setDoc } from '../js/firebase-config.js';
+
+        // ── State ──────────────────────────────────────────
+        let pendingUserData = null;
+        let timerInterval = null;
+
+        // ── Expose functions to window ─────────────────────
+        window.togglePassword = (inputId, iconId) => {
+            const input = document.getElementById(inputId);
+            const icon = document.getElementById(iconId);
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.replace('fa-eye', 'fa-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.replace('fa-eye-slash', 'fa-eye');
+            }
+        };
+
+        window.goBackToForm = () => {
+            clearInterval(timerInterval);
+            resetOTPState();
+            document.getElementById('step1-form').classList.remove('hidden');
+            document.getElementById('step2-otp').classList.add('hidden');
+            setStepIndicator(1);
+            // Re-init recaptcha for retry
+            initRecaptcha('send-otp-btn');
+        };
+
+        window.resendOTP = async () => {
+            const phone = document.getElementById('mobile').value.trim();
+            resetOTPState();
+            initRecaptcha('send-otp-btn');
+            document.getElementById('resend-otp-btn').classList.add('hidden');
+            document.getElementById('otp-timer').classList.remove('hidden');
+            const result = await sendOTP(phone);
+            if (result.success) {
+                startTimer();
+                showToast('OTP resent successfully!', 'success');
+            } else {
+                showToast(result.error, 'error');
+            }
+        };
+
+        window.verifyAndRegister = async () => {
+            const otp = getOTPValue();
+            if (otp.length !== 6) {
+                showToast('Please enter all 6 digits of the OTP', 'error');
+                return;
+            }
+
+            const btn = document.getElementById('verify-otp-btn');
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Verifying...';
+            btn.disabled = true;
+
+            try {
+                // Step 1: Verify OTP with Firebase
+                const otpResult = await verifyOTP(otp);
+                if (!otpResult.success) {
+                    showToast(otpResult.error, 'error');
+                    btn.innerHTML = '<i class="fas fa-check-circle mr-2"></i>Verify & Create Account';
+                    btn.disabled = false;
+                    shakeOTPBoxes();
+                    return;
+                }
+
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Creating Account...';
+
+                // Step 2: OTP verified — now sign out the phone auth user
+                // and register with email/password
+                await logoutUser();
+
+                // Step 3: Register with email + password
+                const result = await registerUser(
+                    pendingUserData.email,
+                    pendingUserData.password,
+                    pendingUserData.userData
+                );
+
+                if (result.success) {
+                    // Save mobile number to user profile
+                    await setDoc(doc(db, 'users', result.user.uid), {
+                        mobile: '+91' + pendingUserData.mobile
+                    }, { merge: true });
+
+                    clearInterval(timerInterval);
+                    showToast('✅ Account created successfully! Redirecting...', 'success');
+                    setTimeout(() => {
+                        redirectToDashboard(pendingUserData.userData.userType);
+                    }, 1500);
+                } else {
+                    showToast('Registration failed: ' + result.error, 'error');
+                    btn.innerHTML = '<i class="fas fa-check-circle mr-2"></i>Verify & Create Account';
+                    btn.disabled = false;
+                }
+            } catch (error) {
+                console.error('Verify & Register error:', error);
+                showToast('An error occurred. Please try again.', 'error');
+                btn.innerHTML = '<i class="fas fa-check-circle mr-2"></i>Verify & Create Account';
+                btn.disabled = false;
+            }
+        };
+
+        // ── User type selection ────────────────────────────
+        const workerBtn = document.getElementById('worker-btn');
+        const employerBtn = document.getElementById('employer-btn');
+        const sendOtpBtn = document.getElementById('send-otp-btn');
+
+        workerBtn.addEventListener('click', () => selectUserType('worker'));
+        employerBtn.addEventListener('click', () => selectUserType('employer'));
+
+        function selectUserType(type) {
+            document.getElementById('user-type').value = type;
+            const loginLink = document.getElementById('login-link');
+
+            if (type === 'worker') {
+                workerBtn.classList.add('border-blue-500', 'bg-blue-50');
+                workerBtn.classList.remove('border-gray-300');
+                employerBtn.classList.remove('border-green-500', 'bg-green-50');
+                employerBtn.classList.add('border-gray-300');
+                document.getElementById('worker-fields').classList.remove('hidden');
+                document.getElementById('employer-fields').classList.add('hidden');
+                sendOtpBtn.textContent = 'Send OTP to Verify (Worker)';
+                sendOtpBtn.className = 'w-full bg-blue-600 text-white py-3 px-4 rounded-lg font-semibold hover:bg-blue-700 transition shadow-lg';
+                loginLink.href = 'worker-login.html';
+                loginLink.textContent = 'Worker Login';
+            } else {
+                employerBtn.classList.add('border-green-500', 'bg-green-50');
+                employerBtn.classList.remove('border-gray-300');
+                workerBtn.classList.remove('border-blue-500', 'bg-blue-50');
+                workerBtn.classList.add('border-gray-300');
+                document.getElementById('employer-fields').classList.remove('hidden');
+                document.getElementById('worker-fields').classList.add('hidden');
+                sendOtpBtn.textContent = 'Send OTP to Verify (Employer)';
+                sendOtpBtn.className = 'w-full bg-green-600 text-white py-3 px-4 rounded-lg font-semibold hover:bg-green-700 transition shadow-lg';
+                loginLink.href = 'employer-login.html';
+                loginLink.textContent = 'Employer Login';
+            }
+            sendOtpBtn.disabled = false;
+            sendOtpBtn.innerHTML = `<i class="fas fa-mobile-alt mr-2"></i>${sendOtpBtn.textContent}`;
+        }
+
+        // ── Form submit → Send OTP ─────────────────────────
+        document.getElementById('register-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const userType   = document.getElementById('user-type').value;
+            const fullName   = document.getElementById('full-name').value.trim();
+            const mobile     = document.getElementById('mobile').value.trim();
+            const email      = document.getElementById('email').value.trim();
+            const password   = document.getElementById('password').value;
+            const location   = document.getElementById('location').value.trim();
+
+            // Validations
+            if (!userType) { showToast('Please select Worker or Employer', 'error'); return; }
+            if (!fullName)  { showToast('Please enter your full name', 'error'); return; }
+            if (!/^[0-9]{10}$/.test(mobile)) { showToast('Please enter a valid 10-digit mobile number', 'error'); return; }
+            if (!email.includes('@')) { showToast('Please enter a valid email address', 'error'); return; }
+            if (password.length < 6)  { showToast('Password must be at least 6 characters', 'error'); return; }
+            if (!location) { showToast('Please enter your location', 'error'); return; }
+
+            const userData = { userType, fullName, location };
+
+            if (userType === 'worker') {
+                const skills = Array.from(document.querySelectorAll('.skill-checkbox:checked')).map(cb => cb.value);
+                const otherSkills = document.getElementById('other-skills').value;
+                if (otherSkills) skills.push(...otherSkills.split(',').map(s => s.trim()).filter(Boolean));
+                if (skills.length === 0) { showToast('Please select at least one skill', 'error'); return; }
+                userData.skills = skills;
+                userData.experience = document.getElementById('experience').value;
+            } else {
+                const businessName = document.getElementById('business-name').value.trim();
+                const businessType = document.getElementById('business-type').value;
+                if (!businessName || !businessType) { showToast('Please fill all employer fields', 'error'); return; }
+                userData.businessName = businessName;
+                userData.businessType = businessType;
+            }
+
+            // Save pending data
+            pendingUserData = { email, password, mobile, userData };
+
+            // Send OTP
+            const btn = document.getElementById('send-otp-btn');
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Sending OTP...';
+            btn.disabled = true;
+
+            const result = await sendOTP(mobile);
+
+            if (result.success) {
+                // Show OTP step
+                document.getElementById('step1-form').classList.add('hidden');
+                document.getElementById('step2-otp').classList.remove('hidden');
+                document.getElementById('otp-phone-display').textContent = '+91 ' + mobile;
+                setStepIndicator(2);
+                startTimer();
+                setupOTPInputs();
+            } else {
+                showToast(result.error, 'error');
+                btn.innerHTML = '<i class="fas fa-mobile-alt mr-2"></i>Send OTP to Verify';
+                btn.disabled = false;
+            }
+        });
+
+        // ── Init reCAPTCHA on page load ────────────────────
+        initRecaptcha('send-otp-btn');
+
+        // ── OTP Input auto-focus logic ─────────────────────
+        function setupOTPInputs() {
+            const inputs = document.querySelectorAll('.otp-input');
+            inputs.forEach((input, index) => {
+                input.value = '';
+                input.addEventListener('input', (e) => {
+                    const val = e.target.value.replace(/\D/g, '');
+                    e.target.value = val;
+                    if (val && index < inputs.length - 1) inputs[index + 1].focus();
+                });
+                input.addEventListener('keydown', (e) => {
+                    if (e.key === 'Backspace' && !input.value && index > 0) inputs[index - 1].focus();
+                });
+                input.addEventListener('paste', (e) => {
+                    e.preventDefault();
+                    const pasted = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, 6);
+                    pasted.split('').forEach((char, i) => { if (inputs[i]) inputs[i].value = char; });
+                    if (inputs[pasted.length - 1]) inputs[pasted.length - 1].focus();
+                });
+            });
+            inputs[0].focus();
+        }
+
+        function getOTPValue() {
+            return Array.from(document.querySelectorAll('.otp-input')).map(i => i.value).join('');
+        }
+
+        function shakeOTPBoxes() {
+            const boxes = document.querySelectorAll('.otp-input');
+            boxes.forEach(b => { b.classList.add('border-red-500'); b.value = ''; });
+            setTimeout(() => boxes.forEach(b => b.classList.remove('border-red-500')), 1000);
+            boxes[0].focus();
+        }
+
+        // ── Countdown Timer ────────────────────────────────
+        function startTimer() {
+            let seconds = 60;
+            document.getElementById('timer-count').textContent = seconds;
+            document.getElementById('otp-timer').classList.remove('hidden');
+            document.getElementById('resend-otp-btn').classList.add('hidden');
+
+            clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                seconds--;
+                document.getElementById('timer-count').textContent = seconds;
+                if (seconds <= 0) {
+                    clearInterval(timerInterval);
+                    document.getElementById('otp-timer').classList.add('hidden');
+                    document.getElementById('resend-otp-btn').classList.remove('hidden');
+                }
+            }, 1000);
+        }
+
+        // ── Step indicator ─────────────────────────────────
+        function setStepIndicator(step) {
+            const s1 = document.getElementById('step1-indicator');
+            const s2 = document.getElementById('step2-indicator');
+            const s2label = document.getElementById('step2-label');
+            if (step === 2) {
+                s1.classList.replace('bg-blue-600', 'bg-green-500');
+                s1.innerHTML = '<i class="fas fa-check"></i>';
+                s2.classList.replace('bg-gray-300', 'bg-blue-600');
+                s2.classList.replace('text-gray-500', 'text-white');
+                s2label.classList.replace('text-gray-500', 'text-blue-600');
+            } else {
+                s1.classList.replace('bg-green-500', 'bg-blue-600');
+                s1.innerHTML = '1';
+                s2.classList.replace('bg-blue-600', 'bg-gray-300');
+                s2.classList.replace('text-white', 'text-gray-500');
+                s2label.classList.replace('text-blue-600', 'text-gray-500');
+            }
+        }
+
+        // ── Toast notification ─────────────────────────────
+        function showToast(message, type = 'info') {
+            const existing = document.getElementById('toast-msg');
+            if (existing) existing.remove();
+
+            const colors = { success: 'bg-green-500', error: 'bg-red-500', info: 'bg-blue-500' };
+            const icons  = { success: 'fa-check-circle', error: 'fa-times-circle', info: 'fa-info-circle' };
+
+            const toast = document.createElement('div');
+            toast.id = 'toast-msg';
+            toast.className = `fixed top-5 right-5 z-50 ${colors[type]} text-white px-6 py-4 rounded-lg shadow-xl flex items-center gap-3 text-sm font-medium max-w-sm`;
+            toast.innerHTML = `<i class="fas ${icons[type]} text-lg"></i><span>${message}</span>`;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 4000);
+        }
+    </script>
+
+</body>
+</html>

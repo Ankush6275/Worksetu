@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employer Dashboard - WorkSetu</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#10B981',
+                        secondary: '#3B82F6',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50">
+    
+    <!-- Navigation Bar -->
+    <nav class="bg-white shadow-md sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-4">
+            <div class="flex justify-between items-center">
+                <!-- Logo -->
+                <div class="flex items-center space-x-2">
+                    <i class="fas fa-briefcase text-primary text-2xl"></i>
+                    <h1 class="text-2xl font-bold text-gray-800">WorkSetu</h1>
+                </div>
+                
+                <!-- Navigation Links -->
+                <div class="hidden md:flex space-x-6">
+                    <a href="employer-dashboard.html" class="text-primary font-semibold border-b-2 border-primary pb-1">
+                        <i class="fas fa-home mr-1"></i>Dashboard
+                    </a>
+                    <a href="post-job.html" class="text-gray-600 hover:text-primary transition">
+                        <i class="fas fa-plus-circle mr-1"></i>Post Job
+                    </a>
+                    <a href="my-jobs.html" class="text-gray-600 hover:text-primary transition">
+                        <i class="fas fa-briefcase mr-1"></i>My Jobs
+                    </a>
+                    <a href="all-applications.html" class="text-gray-600 hover:text-primary transition">
+                        <i class="fas fa-users mr-1"></i>Applications
+                    </a>
+                </div>
+                
+                <!-- User Menu -->
+                <div class="flex items-center space-x-4">
+                    <button id="notifications-btn" class="relative text-gray-600 hover:text-primary">
+                        <i class="fas fa-bell text-xl"></i>
+                        <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">5</span>
+                    </button>
+                    
+                    <div class="relative">
+                        <button id="profile-menu-btn" class="flex items-center space-x-2 text-gray-700 hover:text-primary">
+                            <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+                                <i class="fas fa-building text-primary"></i>
+                            </div>
+                            <span id="user-name-nav" class="hidden md:block font-medium">Loading...</span>
+                            <i class="fas fa-chevron-down text-sm"></i>
+                        </button>
+                        
+                        <!-- Dropdown Menu -->
+                        <div id="profile-dropdown" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2">
+                            <a href="#profile" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">
+                                <i class="fas fa-building mr-2"></i>My Profile
+                            </a>
+                            <a href="#settings" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">
+                                <i class="fas fa-cog mr-2"></i>Settings
+                            </a>
+                            <hr class="my-2">
+                            <button id="logout-btn" class="w-full text-left px-4 py-2 text-red-600 hover:bg-red-50">
+                                <i class="fas fa-sign-out-alt mr-2"></i>Logout
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Mobile Menu Button -->
+                <button class="md:hidden text-gray-600" id="mobile-menu-btn">
+                    <i class="fas fa-bars text-2xl"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mx-auto px-4 py-8">
+        <div class="grid md:grid-cols-3 gap-6">
+            
+            <!-- Left Column - Profile & Stats -->
+            <div class="md:col-span-1 space-y-6">
+                
+                <!-- Profile Card -->
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <div class="text-center">
+                        <div class="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-building text-primary text-4xl"></i>
+                        </div>
+                        <h2 id="business-name" class="text-2xl font-bold text-gray-800 mb-2">Loading...</h2>
+                        <p id="business-type" class="text-gray-600 mb-2">Loading...</p>
+                        <p id="user-location" class="text-gray-600 mb-4">
+                            <i class="fas fa-map-marker-alt mr-1"></i>Loading...
+                        </p>
+                        
+                        <!-- Trust Score -->
+                        <div class="bg-green-50 rounded-lg p-4 mb-4">
+                            <p class="text-sm text-gray-600 mb-1">Trust Score</p>
+                            <div class="flex items-center justify-center space-x-2">
+                                <div class="text-3xl font-bold text-green-600" id="trust-score">50</div>
+                                <div class="text-sm text-gray-600">/ 100</div>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2 mt-2">
+                                <div id="trust-score-bar" class="bg-green-600 h-2 rounded-full" style="width: 50%"></div>
+                            </div>
+                        </div>
+                        
+                        <button class="w-full bg-primary text-white py-2 rounded-lg hover:bg-green-700 transition">
+                            <i class="fas fa-edit mr-2"></i>Edit Profile
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Quick Stats -->
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">Quick Stats</h3>
+                    <div class="space-y-3">
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-600">Active Jobs</span>
+                            <span class="font-semibold text-primary" id="active-jobs">0</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-600">Total Applications</span>
+                            <span class="font-semibold text-blue-600" id="total-applications">0</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-600">Jobs Completed</span>
+                            <span class="font-semibold text-green-600" id="completed-jobs">0</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-600">Total Spent</span>
+                            <span class="font-semibold text-gray-800" id="total-spent">₹0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">Quick Actions</h3>
+                    <div class="space-y-3">
+                        <a href="post-job.html" class="block w-full bg-primary text-white py-3 rounded-lg hover:bg-green-700 transition text-center font-semibold">
+                            <i class="fas fa-plus-circle mr-2"></i>Post New Job
+                        </a>
+                        <button class="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition font-semibold">
+                            <i class="fas fa-search mr-2"></i>Find Workers
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Right Column - Jobs & Activity -->
+            <div class="md:col-span-2 space-y-6">
+                
+                <!-- Welcome Banner -->
+                <div class="bg-gradient-to-r from-green-500 to-green-700 rounded-lg shadow-md p-6 text-white">
+                    <h1 class="text-2xl font-bold mb-2">Welcome back, <span id="welcome-name">Employer</span>! 👋</h1>
+                    <p class="text-green-100">Manage your jobs and find the best workers for your needs.</p>
+                </div>
+                
+                <!-- Action Cards -->
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="bg-white rounded-lg shadow-md p-6 text-center hover:shadow-lg transition">
+                        <div class="bg-green-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <i class="fas fa-briefcase text-primary text-2xl"></i>
+                        </div>
+                        <div class="text-3xl font-bold text-gray-800 mb-2" id="stat-jobs">0</div>
+                        <h3 class="text-gray-600">Active Jobs</h3>
+                    </div>
+                    
+                    <div class="bg-white rounded-lg shadow-md p-6 text-center hover:shadow-lg transition">
+                        <div class="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <i class="fas fa-users text-blue-600 text-2xl"></i>
+                        </div>
+                        <div class="text-3xl font-bold text-gray-800 mb-2" id="stat-applications">0</div>
+                        <h3 class="text-gray-600">New Applications</h3>
+                    </div>
+                </div>
+                
+                <!-- My Posted Jobs -->
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-xl font-bold text-gray-800">
+                            <i class="fas fa-briefcase text-primary mr-2"></i>My Posted Jobs
+                        </h2>
+                        <a href="post-job.html" class="text-primary hover:underline text-sm font-semibold">
+                            <i class="fas fa-plus-circle mr-1"></i>Post New Job
+                        </a>
+                    </div>
+                    
+                    <div id="posted-jobs-container" class="space-y-4">
+                        <!-- Jobs will be loaded here -->
+                        <div class="text-center py-12 text-gray-500">
+                            <i class="fas fa-briefcase text-5xl mb-4 text-gray-300"></i>
+                            <p class="text-lg mb-2">No jobs posted yet</p>
+                            <p class="text-sm mb-4">Start by posting your first job!</p>
+                            <a href="post-job.html" class="inline-block bg-primary text-white px-6 py-3 rounded-lg hover:bg-green-700 transition font-semibold">
+                                <i class="fas fa-plus-circle mr-2"></i>Post Your First Job
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Recent Applications -->
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-xl font-bold text-gray-800">
+                            <i class="fas fa-file-alt text-blue-600 mr-2"></i>Recent Applications
+                        </h2>
+                        <button class="text-primary hover:underline text-sm">
+                            View All <i class="fas fa-arrow-right ml-1"></i>
+                        </button>
+                    </div>
+                    
+                    <div id="applications-container" class="space-y-4">
+                        <div class="text-center py-8 text-gray-500">
+                            <i class="fas fa-inbox text-4xl mb-3 text-gray-300"></i>
+                            <p>No applications yet</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script type="module">
+        import { getCurrentUser, getUserData, logoutUser, checkAuthState } from '../js/auth.js';
+        import { db, collection, query, where, getDocs, orderBy, limit } from '../js/firebase-config.js';
+        
+        // Protect this page - only employers can access
+        checkAuthState(async (user) => {
+            if (!user) {
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            // Load user data
+            const result = await getUserData(user.uid);
+            if (result.success) {
+                const userData = result.data;
+                
+                // Check if user is employer
+                if (userData.userType !== 'employer') {
+                    alert('This page is only for employers!');
+                    window.location.href = userData.userType === 'worker' ? 'worker-dashboard.html' : 'login.html';
+                    return;
+                }
+                
+                // Display user info
+                document.getElementById('business-name').textContent = userData.businessName || 'Business Name';
+                document.getElementById('business-type').textContent = userData.businessType || 'Business Type';
+                document.getElementById('user-name-nav').textContent = userData.fullName;
+                document.getElementById('welcome-name').textContent = userData.fullName.split(' ')[0];
+                document.getElementById('user-location').textContent = userData.location;
+                document.getElementById('trust-score').textContent = userData.trustScore || 50;
+                document.getElementById('trust-score-bar').style.width = (userData.trustScore || 50) + '%';
+                
+                // Load posted jobs
+                await loadPostedJobs(user.uid);
+            }
+        });
+        
+        // Profile dropdown toggle
+        document.getElementById('profile-menu-btn').addEventListener('click', () => {
+            document.getElementById('profile-dropdown').classList.toggle('hidden');
+        });
+        
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            const dropdown = document.getElementById('profile-dropdown');
+            const btn = document.getElementById('profile-menu-btn');
+            if (!dropdown.contains(e.target) && !btn.contains(e.target)) {
+                dropdown.classList.add('hidden');
+            }
+        });
+        
+        // Logout
+        document.getElementById('logout-btn').addEventListener('click', async () => {
+            if (confirm('Are you sure you want to logout?')) {
+                const result = await logoutUser();
+                if (result.success) {
+                    window.location.href = '../index.html';
+                }
+            }
+        });
+        
+        // Load posted jobs from Firestore
+        async function loadPostedJobs(employerId) {
+            try {
+                const jobsRef = collection(db, 'jobs');
+                const q = query(
+                    jobsRef, 
+                    where('employerId', '==', employerId),
+                    orderBy('createdAt', 'desc')
+                );
+                
+                const querySnapshot = await getDocs(q);
+                
+                if (querySnapshot.empty) {
+                    // No jobs - show empty state (already shown by default)
+                    return;
+                }
+                
+                const container = document.getElementById('posted-jobs-container');
+                container.innerHTML = '';
+                
+                let activeJobsCount = 0;
+                let totalApplications = 0;
+                
+                querySnapshot.forEach((doc) => {
+                    const job = doc.data();
+                    if (job.status === 'active') activeJobsCount++;
+                    totalApplications += job.applicationsCount || 0;
+                    
+                    const jobCard = createJobCard(doc.id, job);
+                    container.appendChild(jobCard);
+                });
+                
+                // Update stats
+                document.getElementById('active-jobs').textContent = activeJobsCount;
+                document.getElementById('stat-jobs').textContent = activeJobsCount;
+                document.getElementById('total-applications').textContent = totalApplications;
+                document.getElementById('stat-applications').textContent = totalApplications;
+                
+            } catch (error) {
+                console.error('Error loading jobs:', error);
+            }
+        }
+        
+        // Create job card element
+        function createJobCard(jobId, job) {
+            const card = document.createElement('div');
+            card.className = 'border border-gray-200 rounded-lg p-4 hover:border-primary hover:shadow-md transition';
+            
+            const statusColor = job.status === 'active' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600';
+            
+            card.innerHTML = `
+                <div class="flex justify-between items-start mb-3">
+                    <div class="flex-1">
+                        <h3 class="font-semibold text-gray-800 text-lg mb-1">${job.title}</h3>
+                        <p class="text-gray-600 text-sm">
+                            <i class="fas fa-tools mr-1"></i>${job.skillRequired || 'General'}
+                        </p>
+                    </div>
+                    <span class="${statusColor} px-3 py-1 rounded-full text-xs font-semibold uppercase">
+                        ${job.status || 'Active'}
+                    </span>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-2 mb-3 text-sm text-gray-600">
+                    <div><i class="fas fa-map-marker-alt text-primary mr-1"></i>${job.location}</div>
+                    <div><i class="fas fa-rupee-sign text-green-600 mr-1"></i>${job.salary || 'Not specified'}</div>
+                    <div><i class="fas fa-calendar text-gray-500 mr-1"></i>${job.jobType || 'Full Day'}</div>
+                    <div><i class="fas fa-users text-blue-600 mr-1"></i>${job.applicationsCount || 0} Applications</div>
+                </div>
+                
+                <p class="text-sm text-gray-600 mb-3 line-clamp-2">${job.description || 'No description'}</p>
+                
+                <div class="text-xs text-gray-500 mb-3">
+                    Posted: ${formatDate(job.createdAt)}
+                </div>
+                
+                <div class="flex space-x-2">
+                    <button class="view-applications-btn flex-1 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition text-sm font-semibold" data-job-id="${jobId}">
+                        <i class="fas fa-users mr-1"></i>View Applications (${job.applicationsCount || 0})
+                    </button>
+                    <button class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="px-4 py-2 border border-red-300 text-red-600 rounded-lg hover:bg-red-50 transition">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            `;
+            
+            // Add click event listener to the view applications button
+            const viewBtn = card.querySelector('.view-applications-btn');
+            viewBtn.addEventListener('click', function() {
+                window.location.href = `view-applications.html?jobId=${jobId}`;
+            });
+            
+            return card;
+        }
+        
+        // Format date helper
+        function formatDate(timestamp) {
+            if (!timestamp) return 'Just now';
+            const date = new Date(timestamp);
+            const now = new Date();
+            const diffMs = now - date;
+            const diffMins = Math.floor(diffMs / 60000);
+            
+            if (diffMins < 60) return `${diffMins} minutes ago`;
+            const diffHours = Math.floor(diffMins / 60);
+            if (diffHours < 24) return `${diffHours} hours ago`;
+            const diffDays = Math.floor(diffHours / 24);
+            if (diffDays < 7) return `${diffDays} days ago`;
+            
+            return date.toLocaleDateString();
+        }
+    </script>
+
+</body>
+</html>

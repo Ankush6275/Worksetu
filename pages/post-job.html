@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Post a Job - WorkSetu</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gray-50">
+    
+    <!-- Navigation Bar -->
+    <nav class="bg-white shadow-md">
+        <div class="container mx-auto px-4 py-4">
+            <div class="flex justify-between items-center">
+                <a href="employer-dashboard.html" class="flex items-center space-x-2">
+                    <i class="fas fa-briefcase text-green-600 text-2xl"></i>
+                    <h1 class="text-2xl font-bold text-gray-800">WorkSetu</h1>
+                </a>
+                <a href="employer-dashboard.html" class="text-gray-600 hover:text-green-600">
+                    <i class="fas fa-arrow-left mr-2"></i>Back to Dashboard
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container mx-auto px-4 py-8">
+        <div class="max-w-3xl mx-auto">
+            
+            <!-- Header -->
+            <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                <h1 class="text-3xl font-bold text-gray-800 mb-2">
+                    <i class="fas fa-plus-circle text-green-600 mr-2"></i>Post a New Job
+                </h1>
+                <p class="text-gray-600">Fill in the details below to find the right workers for your job.</p>
+            </div>
+
+            <!-- Job Form -->
+            <form id="job-form" class="bg-white rounded-lg shadow-md p-6 space-y-6">
+                
+                <!-- Job Title -->
+                <div>
+                    <label class="block text-gray-700 mb-2 font-medium">Job Title *</label>
+                    <input 
+                        type="text" 
+                        id="job-title" 
+                        placeholder="e.g., Mason needed for house construction" 
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                        required
+                    >
+                    <p class="text-sm text-gray-500 mt-1">Be specific about the type of work needed</p>
+                </div>
+
+                <!-- Skill Required -->
+                <div>
+                    <label class="block text-gray-700 mb-2 font-medium">Skill Required *</label>
+                    <select 
+                        id="skill-required" 
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                        required
+                    >
+                        <option value="">Select skill needed</option>
+                        <option value="Mason">Mason</option>
+                        <option value="Electrician">Electrician</option>
+                        <option value="Plumber">Plumber</option>
+                        <option value="Painter">Painter</option>
+                        <option value="Carpenter">Carpenter</option>
+                        <option value="Helper">Helper/General Labor</option>
+                        <option value="Welder">Welder</option>
+                        <option value="Tile Worker">Tile Worker</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+
+                <!-- Job Description -->
+                <div>
+                    <label class="block text-gray-700 mb-2 font-medium">Job Description *</label>
+                    <textarea 
+                        id="job-description" 
+                        rows="5" 
+                        placeholder="Describe the work in detail. Include what needs to be done, materials required (if any), and any special requirements."
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                        required
+                    ></textarea>
+                </div>
+
+                <!-- Location -->
+                <div>
+                    <label class="block text-gray-700 mb-2 font-medium">Job Location *</label>
+                    <input 
+                        type="text" 
+                        id="job-location" 
+                        placeholder="Enter area/locality, e.g., Andheri West, Mumbai" 
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                        required
+                    >
+                    <p class="text-sm text-gray-500 mt-1">Be specific to help workers find jobs near them</p>
+                </div>
+
+                <!-- Job Type & Duration -->
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-gray-700 mb-2 font-medium">Job Type *</label>
+                        <select 
+                            id="job-type" 
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                            required
+                        >
+                            <option value="Full Day">Full Day</option>
+                            <option value="Half Day">Half Day</option>
+                            <option value="Hourly">Hourly</option>
+                            <option value="Contract">Contract/Project Based</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-gray-700 mb-2 font-medium">Duration</label>
+                        <input 
+                            type="text" 
+                            id="duration" 
+                            placeholder="e.g., 1 day, 1 week, 2 months" 
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                        >
+                    </div>
+                </div>
+
+                <!-- Salary/Payment -->
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-gray-700 mb-2 font-medium">Minimum Salary (₹/day) *</label>
+                        <input 
+                            type="number" 
+                            id="salary-min" 
+                            placeholder="e.g., 800" 
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                            required
+                        >
+                    </div>
+
+                    <div>
+                        <label class="block text-gray-700 mb-2 font-medium">Maximum Salary (₹/day) *</label>
+                        <input 
+                            type="number" 
+                            id="salary-max" 
+                            placeholder="e.g., 1200" 
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                            required
+                        >
+                    </div>
+                </div>
+
+                <!-- Number of Workers -->
+                <div>
+                    <label class="block text-gray-700 mb-2 font-medium">Number of Workers Needed *</label>
+                    <input 
+                        type="number" 
+                        id="workers-needed" 
+                        min="1" 
+                        value="1" 
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                        required
+                    >
+                </div>
+
+                <!-- Experience Required -->
+                <div>
+                    <label class="block text-gray-700 mb-2 font-medium">Experience Required</label>
+                    <select 
+                        id="experience-required" 
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                    >
+                        <option value="Any">Any Experience Level</option>
+                        <option value="0-1">0-1 years</option>
+                        <option value="1-3">1-3 years</option>
+                        <option value="3-5">3-5 years</option>
+                        <option value="5+">5+ years</option>
+                    </select>
+                </div>
+
+                <!-- Start Date -->
+                <div>
+                    <label class="block text-gray-700 mb-2 font-medium">Start Date *</label>
+                    <input 
+                        type="date" 
+                        id="start-date" 
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                        required
+                    >
+                </div>
+
+                <!-- Contact Information -->
+                <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                    <h3 class="font-semibold text-gray-800 mb-3">
+                        <i class="fas fa-phone text-blue-600 mr-2"></i>Contact Information
+                    </h3>
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-gray-700 mb-2 font-medium">Contact Person</label>
+                            <input 
+                                type="text" 
+                                id="contact-person" 
+                                placeholder="Name" 
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                            >
+                        </div>
+                        <div>
+                            <label class="block text-gray-700 mb-2 font-medium">Contact Number *</label>
+                            <input 
+                                type="tel" 
+                                id="contact-number" 
+                                placeholder="10 digit mobile number" 
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                                pattern="[0-9]{10}"
+                                maxlength="10"
+                                required
+                            >
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Additional Requirements -->
+                <div>
+                    <label class="block text-gray-700 mb-2 font-medium">Additional Requirements (Optional)</label>
+                    <textarea 
+                        id="additional-requirements" 
+                        rows="3" 
+                        placeholder="Any other requirements or preferences for workers"
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                    ></textarea>
+                </div>
+
+                <!-- Submit Buttons -->
+                <div class="flex space-x-4 pt-4">
+                    <button 
+                        type="submit" 
+                        class="flex-1 bg-green-600 text-white py-3 rounded-lg font-semibold hover:bg-green-700 transition"
+                    >
+                        <i class="fas fa-check-circle mr-2"></i>Post Job
+                    </button>
+                    <button 
+                        type="button" 
+                        onclick="window.location.href='employer-dashboard.html'"
+                        class="px-8 py-3 border border-gray-300 rounded-lg font-semibold hover:bg-gray-50 transition"
+                    >
+                        Cancel
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script type="module">
+        import { getCurrentUser, getUserData, checkAuthState } from '../js/auth.js';
+        import { db, collection, addDoc } from '../js/firebase-config.js';
+        
+        let currentUser = null;
+        let currentUserData = null;
+
+        // Protect this page - only employers can access
+        checkAuthState(async (user) => {
+            if (!user) {
+                alert('Please login to post a job');
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            currentUser = user;
+            
+            // Load user data
+            const result = await getUserData(user.uid);
+            if (result.success) {
+                currentUserData = result.data;
+                
+                // Check if user is employer
+                if (currentUserData.userType !== 'employer') {
+                    alert('Only employers can post jobs!');
+                    window.location.href = currentUserData.userType === 'worker' ? 'worker-dashboard.html' : 'login.html';
+                    return;
+                }
+                
+                // Pre-fill contact info
+                if (currentUserData.fullName) {
+                    document.getElementById('contact-person').value = currentUserData.fullName;
+                }
+                
+                // Set minimum start date to today
+                const today = new Date().toISOString().split('T')[0];
+                document.getElementById('start-date').min = today;
+                document.getElementById('start-date').value = today;
+            }
+        });
+
+        // Form submission
+        document.getElementById('job-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            if (!currentUser || !currentUserData) {
+                alert('Please login to post a job');
+                return;
+            }
+            
+            // Get form data
+            const jobData = {
+                // Job details
+                title: document.getElementById('job-title').value.trim(),
+                skillRequired: document.getElementById('skill-required').value,
+                description: document.getElementById('job-description').value.trim(),
+                location: document.getElementById('job-location').value.trim(),
+                jobType: document.getElementById('job-type').value,
+                duration: document.getElementById('duration').value.trim(),
+                
+                // Salary
+                salaryMin: parseInt(document.getElementById('salary-min').value),
+                salaryMax: parseInt(document.getElementById('salary-max').value),
+                salary: `₹${document.getElementById('salary-min').value}-${document.getElementById('salary-max').value}/day`,
+                
+                // Requirements
+                workersNeeded: parseInt(document.getElementById('workers-needed').value),
+                experienceRequired: document.getElementById('experience-required').value,
+                startDate: document.getElementById('start-date').value,
+                
+                // Contact
+                contactPerson: document.getElementById('contact-person').value.trim(),
+                contactNumber: document.getElementById('contact-number').value.trim(),
+                additionalRequirements: document.getElementById('additional-requirements').value.trim(),
+                
+                // Employer info
+                employerId: currentUser.uid,
+                employerName: currentUserData.fullName,
+                businessName: currentUserData.businessName || '',
+                
+                // Metadata
+                status: 'active',
+                applicationsCount: 0,
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString()
+            };
+            
+            // Validate
+            if (jobData.salaryMin > jobData.salaryMax) {
+                alert('Minimum salary cannot be greater than maximum salary');
+                return;
+            }
+            
+            // Show loading
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Posting Job...';
+            submitBtn.disabled = true;
+            
+            try {
+                // Save to Firestore
+                const jobsRef = collection(db, 'jobs');
+                const docRef = await addDoc(jobsRef, jobData);
+                
+                console.log('Job posted with ID:', docRef.id);
+                
+                alert('Job posted successfully! Workers can now see and apply to your job.');
+                window.location.href = 'employer-dashboard.html';
+                
+            } catch (error) {
+                console.error('Error posting job:', error);
+                alert('Failed to post job. Please try again.');
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }
+        });
+    </script>
+
+</body>
+</html>
