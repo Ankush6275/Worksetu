@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WorkSetu - Find Jobs Near You</title>
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Google Fonts: Sora + DM Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#2563EB',
+                        secondary: '#059669',
+                        accent: '#F59E0B',
+                        violet: '#7C3AED',
+                        surface: '#F8FAFC',
+                    },
+                    fontFamily: {
+                        display: ['Sora', 'sans-serif'],
+                        body: ['DM Sans', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body { font-family: 'DM Sans', sans-serif; }
+        h1, h2, h3, .font-display { font-family: 'Sora', sans-serif; }
+
+        /* Hero gradient — richer, more depth */
+        .hero-gradient {
+            background: linear-gradient(135deg, #1e3a8a 0%, #1d4ed8 45%, #0e7490 100%);
+            position: relative;
+        }
+        .hero-gradient::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse at 70% 50%, rgba(99,102,241,0.25) 0%, transparent 60%),
+                        radial-gradient(ellipse at 20% 80%, rgba(16,185,129,0.15) 0%, transparent 50%);
+        }
+
+        /* Glass morphism nav */
+        .glass-nav {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+
+        /* Feature card hover */
+        .float-card {
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
+        }
+        .float-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 24px 48px -8px rgba(37, 99, 235, 0.14), 0 0 0 1px rgba(37,99,235,0.06);
+        }
+
+        /* Animated badge pulse */
+        @keyframes pulse-badge {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(0.97); }
+        }
+        .pulse-badge { animation: pulse-badge 2.5s ease-in-out infinite; }
+
+        /* Step connector line */
+        .step-line { background: linear-gradient(90deg, #2563EB, #059669); }
+
+        /* Smooth section fade-in */
+        .fade-in { animation: fadeIn 0.7s ease forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Hero dot pattern */
+        .dot-pattern {
+            background-image: radial-gradient(circle, rgba(255,255,255,0.12) 1px, transparent 1px);
+            background-size: 28px 28px;
+        }
+
+        /* Gradient text */
+        .gradient-text {
+            background: linear-gradient(135deg, #93c5fd 0%, #a5f3fc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* CTA button shine effect */
+        .btn-shine {
+            position: relative;
+            overflow: hidden;
+        }
+        .btn-shine::after {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 60%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.18), transparent);
+            transition: left 0.5s ease;
+        }
+        .btn-shine:hover::after { left: 150%; }
+
+        /* Stats divider */
+        .stats-divider { border-top: 1px solid rgba(255,255,255,0.15); }
+
+        /* Nav link active indicator */
+        .nav-link-active { color: #2563EB; position: relative; }
+        .nav-link-active::after {
+            content: '';
+            position: absolute;
+            bottom: -2px; left: 0; right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #2563EB, #6366F1);
+            border-radius: 2px;
+        }
+
+        /* Feature icon container */
+        .feature-icon {
+            transition: transform 0.3s ease;
+        }
+        .float-card:hover .feature-icon {
+            transform: scale(1.1) rotate(-3deg);
+        }
+
+        /* Scrollbar hidden for overflow-x */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="bg-slate-50 antialiased">
+
+    <!-- ===== NAVIGATION ===== -->
+    <nav class="glass-nav shadow-sm sticky top-0 z-50 border-b border-slate-100/80">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3.5">
+            <div class="flex justify-between items-center">
+
+                <!-- Logo -->
+                <div class="flex items-center gap-2.5">
+                    <div class="w-9 h-9 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center shadow-md shadow-blue-200/60">
+                        <i class="fas fa-briefcase text-white text-sm"></i>
+                    </div>
+                    <span class="text-xl font-bold text-slate-800 font-display tracking-tight">WorkSetu</span>
+                </div>
+
+                <!-- Desktop Nav Links -->
+                <div class="hidden md:flex items-center gap-7">
+                    <a href="#features" class="text-slate-500 hover:text-slate-800 transition-colors font-medium text-sm">Features</a>
+                    <a href="#how-it-works" class="text-slate-500 hover:text-slate-800 transition-colors font-medium text-sm">How It Works</a>
+                    <a href="#about" class="text-slate-500 hover:text-slate-800 transition-colors font-medium text-sm">About</a>
+                    <a href="pages/admin-login.html" class="flex items-center gap-1.5 text-violet-600 hover:text-violet-700 transition-colors font-semibold text-sm">
+                        <i class="fas fa-shield-alt text-xs"></i>Admin
+                    </a>
+                </div>
+
+                <!-- Auth Buttons -->
+                <div class="flex items-center gap-2.5">
+                    <!-- Login Dropdown -->
+                    <div class="relative group">
+                        <button class="px-4 py-2 text-slate-700 border border-slate-200 bg-white rounded-xl hover:border-blue-300 hover:text-blue-600 hover:bg-blue-50/50 transition-all duration-200 text-sm font-semibold shadow-sm">
+                            Login <i class="fas fa-chevron-down ml-1 text-xs opacity-60"></i>
+                        </button>
+                        <!-- Dropdown -->
+                        <div class="hidden group-hover:block absolute right-0 mt-2.5 w-64 bg-white rounded-2xl shadow-2xl shadow-slate-200/80 border border-slate-100 z-50 overflow-hidden">
+                            <div class="p-2">
+                                <a href="pages/worker-login.html" class="flex items-center gap-3.5 px-4 py-3 hover:bg-slate-50 rounded-xl transition-colors group/item">
+                                    <div class="w-10 h-10 bg-gradient-to-br from-emerald-50 to-emerald-100 rounded-xl flex items-center justify-center flex-shrink-0 border border-emerald-100">
+                                        <i class="fas fa-hard-hat text-emerald-600 text-sm"></i>
+                                    </div>
+                                    <div>
+                                        <p class="font-semibold text-slate-800 text-sm group-hover/item:text-emerald-700 transition-colors">Worker Login</p>
+                                        <p class="text-xs text-slate-400 mt-0.5">Find daily jobs near you</p>
+                                    </div>
+                                    <i class="fas fa-arrow-right text-xs text-slate-300 ml-auto group-hover/item:text-emerald-500 group-hover/item:translate-x-0.5 transition-all"></i>
+                                </a>
+                                <a href="pages/employer-login.html" class="flex items-center gap-3.5 px-4 py-3 hover:bg-slate-50 rounded-xl transition-colors group/item">
+                                    <div class="w-10 h-10 bg-gradient-to-br from-violet-50 to-violet-100 rounded-xl flex items-center justify-center flex-shrink-0 border border-violet-100">
+                                        <i class="fas fa-building text-violet-600 text-sm"></i>
+                                    </div>
+                                    <div>
+                                        <p class="font-semibold text-slate-800 text-sm group-hover/item:text-violet-700 transition-colors">Employer Login</p>
+                                        <p class="text-xs text-slate-400 mt-0.5">Hire skilled workers</p>
+                                    </div>
+                                    <i class="fas fa-arrow-right text-xs text-slate-300 ml-auto group-hover/item:text-violet-500 group-hover/item:translate-x-0.5 transition-all"></i>
+                                </a>
+                                <div class="border-t border-slate-100 my-1.5 mx-2"></div>
+                                <a href="pages/admin-login.html" class="flex items-center gap-3.5 px-4 py-3 hover:bg-indigo-50 rounded-xl transition-colors group/item">
+                                    <div class="w-10 h-10 bg-gradient-to-br from-indigo-50 to-indigo-100 rounded-xl flex items-center justify-center flex-shrink-0 border border-indigo-100">
+                                        <i class="fas fa-shield-alt text-indigo-600 text-sm"></i>
+                                    </div>
+                                    <div>
+                                        <p class="font-semibold text-slate-800 text-sm group-hover/item:text-indigo-700 transition-colors">Admin Login</p>
+                                        <p class="text-xs text-slate-400 mt-0.5">Platform management</p>
+                                    </div>
+                                    <i class="fas fa-arrow-right text-xs text-slate-300 ml-auto group-hover/item:text-indigo-500 group-hover/item:translate-x-0.5 transition-all"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <a href="pages/register.html" class="btn-shine px-5 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl text-sm font-semibold shadow-md shadow-blue-200 hover:shadow-lg hover:shadow-blue-300/50 hover:scale-[1.02] transition-all duration-200">
+                        Get Started
+                    </a>
+
+                    <!-- Mobile Menu Button -->
+                    <button class="md:hidden text-slate-600 w-9 h-9 flex items-center justify-center bg-slate-100 rounded-xl hover:bg-slate-200 transition-colors" id="mobile-menu-btn">
+                        <i class="fas fa-bars text-sm"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Mobile Menu -->
+            <div id="mobile-menu" class="hidden md:hidden mt-3 pb-3 border-t border-slate-100 pt-3 space-y-0.5">
+                <a href="#features" class="flex items-center gap-2 py-2.5 px-3 text-slate-600 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-colors text-sm font-medium">Features</a>
+                <a href="#how-it-works" class="flex items-center gap-2 py-2.5 px-3 text-slate-600 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-colors text-sm font-medium">How It Works</a>
+                <a href="#about" class="flex items-center gap-2 py-2.5 px-3 text-slate-600 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-colors text-sm font-medium">About</a>
+                <div class="border-t border-slate-100 my-2"></div>
+                <a href="pages/worker-login.html" class="flex items-center gap-2 py-2.5 px-3 text-emerald-700 font-semibold hover:bg-emerald-50 rounded-xl transition-colors text-sm"><i class="fas fa-hard-hat"></i>Worker Login</a>
+                <a href="pages/employer-login.html" class="flex items-center gap-2 py-2.5 px-3 text-violet-700 font-semibold hover:bg-violet-50 rounded-xl transition-colors text-sm"><i class="fas fa-building"></i>Employer Login</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ===== HERO SECTION ===== -->
+    <section class="hero-gradient text-white relative overflow-hidden min-h-[600px] flex items-center">
+        <!-- Dot pattern overlay -->
+        <div class="dot-pattern absolute inset-0 z-0"></div>
+
+        <!-- Decorative shapes -->
+        <div class="absolute top-0 right-0 w-[500px] h-[500px] bg-white/[0.04] rounded-full -translate-y-1/3 translate-x-1/3 blur-3xl"></div>
+        <div class="absolute bottom-0 left-0 w-[400px] h-[400px] bg-emerald-400/[0.08] rounded-full translate-y-1/3 -translate-x-1/3 blur-3xl"></div>
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] bg-indigo-600/[0.06] rounded-full blur-3xl"></div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 py-20 md:py-28 relative z-10 w-full">
+            <div class="max-w-3xl mx-auto text-center">
+                <!-- Badge -->
+                <div class="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/20 rounded-full px-4 py-2 mb-8 text-sm font-medium pulse-badge shadow-lg shadow-black/10">
+                    <span class="w-2 h-2 bg-emerald-400 rounded-full shadow-sm shadow-emerald-300"></span>
+                    Trusted by 10,000+ workers across India
+                </div>
+
+                <h1 class="text-4xl md:text-6xl font-bold mb-6 leading-tight font-display tracking-tight">
+                    Find Daily Wage Jobs<br>
+                    <span class="gradient-text">Near You</span>
+                </h1>
+                <p class="text-lg md:text-xl text-blue-100/90 mb-10 leading-relaxed max-w-xl mx-auto font-body">
+                    Connecting skilled workers and trusted employers — safely, quickly, and without middlemen.
+                </p>
+
+                <!-- CTA Buttons -->
+                <div class="flex flex-col sm:flex-row justify-center gap-4">
+                    <a href="pages/register.html?type=worker"
+                       class="btn-shine group flex items-center justify-center gap-3 px-8 py-4 bg-white text-blue-700 rounded-2xl font-bold hover:bg-blue-50 transition-all duration-300 shadow-xl shadow-black/20 hover:scale-[1.03] hover:shadow-2xl">
+                        <div class="w-9 h-9 bg-blue-50 rounded-xl flex items-center justify-center group-hover:bg-blue-100 transition-all">
+                            <i class="fas fa-hard-hat text-blue-600 text-sm"></i>
+                        </div>
+                        I'm a Worker
+                    </a>
+                    <a href="pages/register.html?type=employer"
+                       class="btn-shine group flex items-center justify-center gap-3 px-8 py-4 bg-emerald-500 text-white rounded-2xl font-bold hover:bg-emerald-400 transition-all duration-300 shadow-xl shadow-black/20 hover:scale-[1.03] hover:shadow-2xl border border-emerald-400/30">
+                        <div class="w-9 h-9 bg-white/20 rounded-xl flex items-center justify-center group-hover:bg-white/30 transition-all">
+                            <i class="fas fa-building text-white text-sm"></i>
+                        </div>
+                        I'm an Employer
+                    </a>
+                </div>
+
+                <!-- Stats row -->
+                <div class="flex flex-col sm:flex-row justify-center gap-8 mt-14 pt-10 stats-divider">
+                    <div class="text-center">
+                        <div class="text-3xl font-bold font-display tracking-tight">10K+</div>
+                        <div class="text-blue-200/80 text-sm mt-1.5 font-medium">Workers Registered</div>
+                    </div>
+                    <div class="hidden sm:block w-px bg-white/15"></div>
+                    <div class="text-center">
+                        <div class="text-3xl font-bold font-display tracking-tight">2K+</div>
+                        <div class="text-blue-200/80 text-sm mt-1.5 font-medium">Employers</div>
+                    </div>
+                    <div class="hidden sm:block w-px bg-white/15"></div>
+                    <div class="text-center">
+                        <div class="text-3xl font-bold font-display tracking-tight">50K+</div>
+                        <div class="text-blue-200/80 text-sm mt-1.5 font-medium">Jobs Posted</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== FEATURES SECTION ===== -->
+    <section id="features" class="py-20 md:py-28 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6">
+            <div class="text-center mb-14">
+                <span class="inline-flex items-center gap-1.5 text-blue-600 font-semibold text-xs uppercase tracking-widest mb-3 bg-blue-50 border border-blue-100 rounded-full px-3.5 py-1.5">
+                    <i class="fas fa-sparkles text-blue-500"></i>Why WorkSetu?
+                </span>
+                <h2 class="text-3xl md:text-4xl font-bold text-slate-800 mt-3 font-display tracking-tight">Built for the real workforce</h2>
+                <p class="text-slate-500 mt-3 max-w-lg mx-auto text-base leading-relaxed">Everything you need to find work or hire workers — in one powerful platform.</p>
+            </div>
+
+            <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Feature 1 -->
+                <div class="float-card bg-slate-50 border border-slate-100 rounded-2xl p-7 cursor-default hover:bg-white">
+                    <div class="feature-icon w-14 h-14 bg-gradient-to-br from-blue-100 to-blue-50 rounded-2xl flex items-center justify-center mb-5 border border-blue-100/50 shadow-sm">
+                        <i class="fas fa-map-marker-alt text-blue-600 text-xl"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-800 mb-2.5 font-display">Location-Based Jobs</h3>
+                    <p class="text-slate-500 text-sm leading-relaxed">Find work opportunities near your location. No need to travel far for daily wage jobs.</p>
+                </div>
+
+                <!-- Feature 2 -->
+                <div class="float-card bg-slate-50 border border-slate-100 rounded-2xl p-7 cursor-default hover:bg-white">
+                    <div class="feature-icon w-14 h-14 bg-gradient-to-br from-emerald-100 to-emerald-50 rounded-2xl flex items-center justify-center mb-5 border border-emerald-100/50 shadow-sm">
+                        <i class="fas fa-shield-alt text-emerald-600 text-xl"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-800 mb-2.5 font-display">Secure & Trusted</h3>
+                    <p class="text-slate-500 text-sm leading-relaxed">OTP-based login and trust scores ensure safety for workers and employers alike.</p>
+                </div>
+
+                <!-- Feature 3 -->
+                <div class="float-card bg-slate-50 border border-slate-100 rounded-2xl p-7 cursor-default hover:bg-white">
+                    <div class="feature-icon w-14 h-14 bg-gradient-to-br from-amber-100 to-amber-50 rounded-2xl flex items-center justify-center mb-5 border border-amber-100/50 shadow-sm">
+                        <i class="fas fa-robot text-amber-500 text-xl"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-800 mb-2.5 font-display">Smart Recommendations</h3>
+                    <p class="text-slate-500 text-sm leading-relaxed">AI suggests the best jobs based on your skills, experience, and location.</p>
+                </div>
+
+                <!-- Feature 4 -->
+                <div class="float-card bg-slate-50 border border-slate-100 rounded-2xl p-7 cursor-default hover:bg-white">
+                    <div class="feature-icon w-14 h-14 bg-gradient-to-br from-violet-100 to-violet-50 rounded-2xl flex items-center justify-center mb-5 border border-violet-100/50 shadow-sm">
+                        <i class="fas fa-mobile-alt text-violet-600 text-xl"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-800 mb-2.5 font-display">Mobile Friendly</h3>
+                    <p class="text-slate-500 text-sm leading-relaxed">Works perfectly on any smartphone or device — even on slow internet connections.</p>
+                </div>
+
+                <!-- Feature 5 -->
+                <div class="float-card bg-slate-50 border border-slate-100 rounded-2xl p-7 cursor-default hover:bg-white">
+                    <div class="feature-icon w-14 h-14 bg-gradient-to-br from-red-100 to-red-50 rounded-2xl flex items-center justify-center mb-5 border border-red-100/50 shadow-sm">
+                        <i class="fas fa-handshake text-red-500 text-xl"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-800 mb-2.5 font-display">Direct Connection</h3>
+                    <p class="text-slate-500 text-sm leading-relaxed">Connect directly with employers. No middlemen, no extra fees, no delays.</p>
+                </div>
+
+                <!-- Feature 6 -->
+                <div class="float-card bg-slate-50 border border-slate-100 rounded-2xl p-7 cursor-default hover:bg-white">
+                    <div class="feature-icon w-14 h-14 bg-gradient-to-br from-indigo-100 to-indigo-50 rounded-2xl flex items-center justify-center mb-5 border border-indigo-100/50 shadow-sm">
+                        <i class="fas fa-headset text-indigo-600 text-xl"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-800 mb-2.5 font-display">Support System</h3>
+                    <p class="text-slate-500 text-sm leading-relaxed">Complaint and help system for resolving any issues quickly and fairly.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== HOW IT WORKS ===== -->
+    <section id="how-it-works" class="py-20 md:py-28 bg-slate-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6">
+            <div class="text-center mb-14">
+                <span class="inline-flex items-center gap-1.5 text-blue-600 font-semibold text-xs uppercase tracking-widest mb-3 bg-blue-50 border border-blue-100 rounded-full px-3.5 py-1.5">
+                    <i class="fas fa-route text-blue-500"></i>Simple Process
+                </span>
+                <h2 class="text-3xl md:text-4xl font-bold text-slate-800 mt-3 font-display tracking-tight">How It Works</h2>
+                <p class="text-slate-500 mt-3 max-w-md mx-auto">Get started in minutes — no complicated setup required.</p>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-6">
+                <!-- For Workers -->
+                <div class="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden hover:shadow-md transition-shadow duration-300">
+                    <div class="bg-gradient-to-br from-blue-600 to-indigo-600 p-6 text-white">
+                        <div class="flex items-center gap-3">
+                            <div class="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center border border-white/20">
+                                <i class="fas fa-hard-hat text-white text-lg"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-bold font-display">For Workers</h3>
+                                <p class="text-blue-100 text-xs mt-0.5">4 easy steps to get hired</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-7">
+                        <div class="space-y-5">
+                            <div class="flex items-start gap-4">
+                                <div class="w-8 h-8 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-full flex items-center justify-center flex-shrink-0 text-white text-sm font-bold shadow-md shadow-blue-200">1</div>
+                                <div class="pt-0.5">
+                                    <p class="text-slate-700 font-medium text-sm">Register with your mobile number and verify with OTP</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-4">
+                                <div class="w-8 h-8 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-full flex items-center justify-center flex-shrink-0 text-white text-sm font-bold shadow-md shadow-blue-200">2</div>
+                                <div class="pt-0.5">
+                                    <p class="text-slate-700 font-medium text-sm">Add your skills, location, and work preferences</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-4">
+                                <div class="w-8 h-8 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-full flex items-center justify-center flex-shrink-0 text-white text-sm font-bold shadow-md shadow-blue-200">3</div>
+                                <div class="pt-0.5">
+                                    <p class="text-slate-700 font-medium text-sm">Browse nearby jobs or get AI-powered recommendations</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-4">
+                                <div class="w-8 h-8 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-full flex items-center justify-center flex-shrink-0 text-white text-sm font-bold shadow-md shadow-blue-200">4</div>
+                                <div class="pt-0.5">
+                                    <p class="text-slate-700 font-medium text-sm">Apply to jobs and connect directly with employers</p>
+                                </div>
+                            </div>
+                        </div>
+                        <a href="pages/register.html?type=worker" class="mt-7 w-full flex items-center justify-center gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-3 rounded-xl font-semibold hover:opacity-90 transition-all hover:shadow-lg hover:shadow-blue-200/60 hover:scale-[1.01] text-sm">
+                            Register as Worker <i class="fas fa-arrow-right text-xs"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- For Employers -->
+                <div class="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden hover:shadow-md transition-shadow duration-300">
+                    <div class="bg-gradient-to-br from-emerald-500 to-teal-600 p-6 text-white">
+                        <div class="flex items-center gap-3">
+                            <div class="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center border border-white/20">
+                                <i class="fas fa-building text-white text-lg"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-bold font-display">For Employers</h3>
+                                <p class="text-emerald-100 text-xs mt-0.5">4 easy steps to hire workers</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-7">
+                        <div class="space-y-5">
+                            <div class="flex items-start gap-4">
+                                <div class="w-8 h-8 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-full flex items-center justify-center flex-shrink-0 text-white text-sm font-bold shadow-md shadow-emerald-200">1</div>
+                                <div class="pt-0.5">
+                                    <p class="text-slate-700 font-medium text-sm">Create an account and verify your business</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-4">
+                                <div class="w-8 h-8 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-full flex items-center justify-center flex-shrink-0 text-white text-sm font-bold shadow-md shadow-emerald-200">2</div>
+                                <div class="pt-0.5">
+                                    <p class="text-slate-700 font-medium text-sm">Post job requirements with location and pay details</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-4">
+                                <div class="w-8 h-8 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-full flex items-center justify-center flex-shrink-0 text-white text-sm font-bold shadow-md shadow-emerald-200">3</div>
+                                <div class="pt-0.5">
+                                    <p class="text-slate-700 font-medium text-sm">Review applications from qualified local workers</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-4">
+                                <div class="w-8 h-8 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-full flex items-center justify-center flex-shrink-0 text-white text-sm font-bold shadow-md shadow-emerald-200">4</div>
+                                <div class="pt-0.5">
+                                    <p class="text-slate-700 font-medium text-sm">Hire workers and complete the job safely and securely</p>
+                                </div>
+                            </div>
+                        </div>
+                        <a href="pages/register.html?type=employer" class="mt-7 w-full flex items-center justify-center gap-2 bg-gradient-to-r from-emerald-500 to-teal-600 text-white py-3 rounded-xl font-semibold hover:opacity-90 transition-all hover:shadow-lg hover:shadow-emerald-200/60 hover:scale-[1.01] text-sm">
+                            Register as Employer <i class="fas fa-arrow-right text-xs"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== ABOUT SECTION ===== -->
+    <section id="about" class="py-20 md:py-28 bg-white">
+        <div class="max-w-3xl mx-auto px-4 sm:px-6 text-center">
+            <span class="inline-flex items-center gap-1.5 text-blue-600 font-semibold text-xs uppercase tracking-widest mb-3 bg-blue-50 border border-blue-100 rounded-full px-3.5 py-1.5">
+                <i class="fas fa-heart text-blue-500"></i>Our Mission
+            </span>
+            <h2 class="text-3xl md:text-4xl font-bold text-slate-800 mt-3 mb-6 font-display tracking-tight">About WorkSetu</h2>
+            <p class="text-lg text-slate-500 mb-5 leading-relaxed">
+                WorkSetu is designed to help daily-wage workers like helpers, masons, electricians, and painters find jobs safely and easily. We connect workers directly with employers, removing the need for middlemen and reducing fraud.
+            </p>
+            <p class="text-lg text-slate-500 leading-relaxed">
+                Our mission is to empower workers with technology and create a trusted platform where finding work is simple, fast, and secure.
+            </p>
+
+            <!-- Trust indicators -->
+            <div class="flex flex-wrap justify-center gap-3 mt-10">
+                <div class="flex items-center gap-2 bg-slate-50 border border-slate-200 rounded-full px-4 py-2.5 text-sm text-slate-600 hover:border-blue-200 hover:bg-blue-50 transition-colors cursor-default">
+                    <i class="fas fa-lock text-blue-500"></i> OTP Verified
+                </div>
+                <div class="flex items-center gap-2 bg-slate-50 border border-slate-200 rounded-full px-4 py-2.5 text-sm text-slate-600 hover:border-amber-200 hover:bg-amber-50 transition-colors cursor-default">
+                    <i class="fas fa-star text-amber-500"></i> Trust Score System
+                </div>
+                <div class="flex items-center gap-2 bg-slate-50 border border-slate-200 rounded-full px-4 py-2.5 text-sm text-slate-600 hover:border-emerald-200 hover:bg-emerald-50 transition-colors cursor-default">
+                    <i class="fas fa-headset text-emerald-600"></i> 24/7 Support
+                </div>
+                <div class="flex items-center gap-2 bg-slate-50 border border-slate-200 rounded-full px-4 py-2.5 text-sm text-slate-600 hover:border-violet-200 hover:bg-violet-50 transition-colors cursor-default">
+                    <i class="fas fa-robot text-violet-600"></i> AI-Powered
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== FOOTER ===== -->
+    <footer class="bg-slate-900 text-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 py-14">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-8">
+                <div class="text-center md:text-left">
+                    <div class="flex items-center justify-center md:justify-start gap-2.5 mb-3">
+                        <div class="w-9 h-9 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-md shadow-blue-900/50">
+                            <i class="fas fa-briefcase text-white text-xs"></i>
+                        </div>
+                        <span class="text-lg font-bold font-display tracking-tight">WorkSetu</span>
+                    </div>
+                    <p class="text-slate-400 text-sm">Connecting Workers and Employers across India</p>
+                </div>
+
+                <div class="flex gap-3">
+                    <a href="#" class="w-10 h-10 bg-slate-800 rounded-xl flex items-center justify-center text-slate-400 hover:text-white hover:bg-slate-700 transition-all hover:scale-105 border border-slate-700/50">
+                        <i class="fab fa-facebook-f text-sm"></i>
+                    </a>
+                    <a href="#" class="w-10 h-10 bg-slate-800 rounded-xl flex items-center justify-center text-slate-400 hover:text-white hover:bg-slate-700 transition-all hover:scale-105 border border-slate-700/50">
+                        <i class="fab fa-twitter text-sm"></i>
+                    </a>
+                    <a href="#" class="w-10 h-10 bg-slate-800 rounded-xl flex items-center justify-center text-slate-400 hover:text-white hover:bg-slate-700 transition-all hover:scale-105 border border-slate-700/50">
+                        <i class="fab fa-instagram text-sm"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="border-t border-slate-800 mt-10 pt-6 text-center text-slate-500 text-sm">
+                © 2025 WorkSetu. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript for Mobile Menu (unchanged) -->
+    <script>
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+    </script>
+</body>
+</html>

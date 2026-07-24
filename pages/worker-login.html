@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Worker Login - WorkSetu</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { primary: '#2563EB', secondary: '#059669', surface: '#F8FAFC' },
+                    fontFamily: { display: ['Sora','sans-serif'], body: ['DM Sans','sans-serif'] }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'DM Sans', sans-serif; }
+        h1,h2,h3 { font-family: 'Sora', sans-serif; }
+        .input-field {
+            width: 100%; padding: 0.75rem 1rem; border: 1.5px solid #E2E8F0;
+            border-radius: 0.75rem; outline: none; transition: all 0.2s;
+            background: #F8FAFC; font-size: 0.9rem;
+        }
+        .input-field:focus { border-color: #2563EB; background: white; box-shadow: 0 0 0 3px rgba(37,99,235,0.1); }
+        .bg-pattern {
+            background-color: #EFF6FF;
+            background-image: radial-gradient(circle at 20% 80%, rgba(16,185,129,0.08) 0%, transparent 50%),
+                              radial-gradient(circle at 80% 20%, rgba(37,99,235,0.08) 0%, transparent 50%);
+        }
+    </style>
+</head>
+<!-- UI UPGRADED: Split-panel layout with emerald branding for workers -->
+<body class="bg-pattern min-h-screen flex items-center justify-center p-4">
+
+    <div class="w-full max-w-sm">
+        <!-- Back link -->
+        <a href="../index.html" class="inline-flex items-center gap-2 text-slate-500 hover:text-slate-700 text-sm mb-6 transition-colors">
+            <i class="fas fa-arrow-left text-xs"></i> Back to Home
+        </a>
+
+        <!-- Card -->
+        <div class="bg-white rounded-3xl shadow-xl border border-slate-100 overflow-hidden">
+
+            <!-- Card Header -->
+            <div class="bg-gradient-to-br from-emerald-500 to-emerald-700 p-7 text-white">
+                <div class="w-14 h-14 bg-white/20 rounded-2xl flex items-center justify-center mb-4 backdrop-blur-sm">
+                    <i class="fas fa-hard-hat text-white text-2xl"></i>
+                </div>
+                <h1 class="text-2xl font-bold mb-1">Worker Login</h1>
+                <p class="text-emerald-100 text-sm">Find jobs near you today</p>
+            </div>
+
+            <!-- Card Body -->
+            <div class="p-7">
+                <!-- Info Box -->
+                <div class="bg-blue-50 border border-blue-100 rounded-xl p-3.5 mb-6 flex gap-3 items-start">
+                    <i class="fas fa-info-circle text-blue-500 mt-0.5 flex-shrink-0"></i>
+                    <p class="text-sm text-blue-700">This login is for <strong>Workers</strong> only. Employers should use the employer login.</p>
+                </div>
+
+                <!-- Login Form (IDs unchanged) -->
+                <form id="worker-login-form" class="space-y-5">
+                    <!-- Email -->
+                    <div>
+                        <label class="block text-slate-700 text-sm font-semibold mb-2">Email Address</label>
+                        <div class="relative">
+                            <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400">
+                                <i class="fas fa-envelope text-sm"></i>
+                            </span>
+                            <input
+                                type="email"
+                                id="worker-email"
+                                placeholder="Enter your email"
+                                class="input-field pl-10"
+                                required
+                            >
+                        </div>
+                    </div>
+
+                    <!-- Password -->
+                    <div>
+                        <label class="block text-slate-700 text-sm font-semibold mb-2">Password</label>
+                        <div class="relative">
+                            <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400">
+                                <i class="fas fa-lock text-sm"></i>
+                            </span>
+                            <input
+                                type="password"
+                                id="worker-password"
+                                placeholder="Enter your password"
+                                class="input-field pl-10 pr-12"
+                                required
+                            >
+                            <button type="button" id="toggle-password" class="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors">
+                                <i class="fas fa-eye text-sm" id="eye-icon"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button
+                        type="submit"
+                        class="w-full bg-emerald-600 text-white py-3.5 rounded-xl font-bold hover:bg-emerald-700 transition-all duration-200 shadow-lg shadow-emerald-200 hover:shadow-xl hover:shadow-emerald-300 hover:scale-[1.01] flex items-center justify-center gap-2 mt-2"
+                    >
+                        <i class="fas fa-sign-in-alt"></i>
+                        Login as Worker
+                    </button>
+                </form>
+
+                <!-- Links -->
+                <div class="mt-6 space-y-3 text-center">
+                    <p class="text-slate-500 text-sm">
+                        Don't have an account?
+                        <a href="register.html" class="text-emerald-600 font-semibold hover:underline">Register</a>
+                    </p>
+                    <p class="text-slate-500 text-sm">
+                        Are you an employer?
+                        <a href="employer-login.html" class="text-violet-600 font-semibold hover:underline">Employer Login</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript (UNCHANGED - same logic) -->
+    <script type="module">
+        import { loginUser, logoutUser } from '../js/auth.js';
+
+        // Toggle password
+        document.getElementById('toggle-password').addEventListener('click', function() {
+            const passwordInput = document.getElementById('worker-password');
+            const eyeIcon = document.getElementById('eye-icon');
+
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                eyeIcon.classList.remove('fa-eye');
+                eyeIcon.classList.add('fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                eyeIcon.classList.remove('fa-eye-slash');
+                eyeIcon.classList.add('fa-eye');
+            }
+        });
+
+        // Worker login
+        document.getElementById('worker-login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const email = document.getElementById('worker-email').value.trim();
+            const password = document.getElementById('worker-password').value;
+
+            if (!email || !email.includes('@')) {
+                alert('❌ Please enter a valid email address');
+                return;
+            }
+
+            if (!password || password.length < 6) {
+                alert('❌ Password must be at least 6 characters');
+                return;
+            }
+
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Verifying...';
+            submitBtn.disabled = true;
+
+            try {
+                const result = await loginUser(email, password);
+
+                if (!result.success) {
+                    alert('❌ Login failed: ' + result.error);
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.disabled = false;
+                    return;
+                }
+
+                if (!result.userData || Object.keys(result.userData).length === 0) {
+                    alert('⚠️ Account Setup Required!\n\nPlease complete registration first.');
+                    await logoutUser();
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.disabled = false;
+                    window.location.href = 'register.html';
+                    return;
+                }
+
+                const userData = result.userData;
+
+                if (userData.userType !== 'worker') {
+                    alert('⛔ ACCESS DENIED!\n\nThis is the WORKER login page.\n\nYour account type: ' + userData.userType.toUpperCase() + '\n\nPlease use the correct login page for your account type.');
+                    await logoutUser();
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.disabled = false;
+
+                    if (userData.userType === 'employer') {
+                        setTimeout(() => { window.location.href = 'employer-login.html'; }, 2000);
+                    } else if (userData.isAdmin) {
+                        setTimeout(() => { window.location.href = 'admin-login.html'; }, 2000);
+                    }
+                    return;
+                }
+
+                alert('✅ Worker Login Successful!\n\nWelcome back, ' + userData.fullName);
+                window.location.href = 'worker-dashboard.html';
+
+            } catch (error) {
+                console.error('Login error:', error);
+                alert('❌ An error occurred. Please try again.');
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>

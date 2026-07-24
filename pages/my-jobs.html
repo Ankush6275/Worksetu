@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Jobs - WorkSetu</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { primary: '#059669', secondary: '#2563EB', surface: '#F8FAFC' },
+                    fontFamily: { display: ['Sora','sans-serif'], body: ['DM Sans','sans-serif'] }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'DM Sans', sans-serif; background: #F8FAFC; }
+        h1,h2,h3 { font-family: 'Sora', sans-serif; }
+        .card { background: white; border-radius: 1.25rem; border: 1px solid #E2E8F0; }
+        .input-field { width: 100%; padding: 0.625rem 0.875rem; border: 1.5px solid #E2E8F0; border-radius: 0.75rem; outline: none; transition: all 0.2s; background: #F8FAFC; font-size: 0.875rem; }
+        .input-field:focus { border-color: #059669; background: white; box-shadow: 0 0 0 3px rgba(5,150,105,0.1); }
+    </style>
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav class="bg-white border-b border-slate-200 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 py-3">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-8 h-8 bg-emerald-600 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-briefcase text-white text-xs"></i>
+                    </div>
+                    <span class="text-lg font-bold text-slate-800" style="font-family:'Sora',sans-serif">WorkSetu</span>
+                </div>
+
+                <div class="hidden md:flex items-center gap-6">
+                    <a href="employer-dashboard.html" class="text-slate-500 hover:text-emerald-600 transition-colors text-sm">
+                        <i class="fas fa-home mr-1.5"></i>Dashboard
+                    </a>
+                    <a href="post-job.html" class="text-slate-500 hover:text-emerald-600 transition-colors text-sm">
+                        <i class="fas fa-plus-circle mr-1.5"></i>Post Job
+                    </a>
+                    <a href="my-jobs.html" class="text-emerald-600 font-bold border-b-2 border-emerald-600 pb-1 text-sm">
+                        <i class="fas fa-briefcase mr-1.5"></i>My Jobs
+                    </a>
+                    <a href="all-applications.html" class="text-slate-500 hover:text-emerald-600 transition-colors text-sm">
+                        <i class="fas fa-users mr-1.5"></i>Applications
+                    </a>
+                </div>
+
+                <div class="flex items-center gap-3">
+                    <span class="text-slate-700 font-medium text-sm" id="user-name">Loading...</span>
+                    <button id="logout-btn" class="bg-red-500 text-white px-3.5 py-2 rounded-xl hover:bg-red-600 transition-colors text-sm font-semibold">
+                        <i class="fas fa-sign-out-alt mr-1.5"></i>Logout
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="max-w-7xl mx-auto px-4 py-6">
+
+        <!-- Header -->
+        <div class="card p-6 mb-5">
+            <div class="flex flex-wrap justify-between items-center gap-4">
+                <div>
+                    <h1 class="text-2xl font-bold text-slate-800 flex items-center gap-2.5">
+                        <i class="fas fa-briefcase text-emerald-600"></i>My Posted Jobs
+                    </h1>
+                    <p class="text-slate-500 text-sm mt-1">Manage all your job postings</p>
+                </div>
+                <a href="post-job.html" class="flex items-center gap-2 bg-emerald-600 text-white px-5 py-2.5 rounded-xl hover:bg-emerald-700 transition-all font-bold text-sm shadow-md shadow-emerald-200 hover:shadow-lg hover:scale-[1.02]">
+                    <i class="fas fa-plus-circle"></i>Post New Job
+                </a>
+            </div>
+        </div>
+
+        <!-- Filter & Search -->
+        <div class="card p-4 mb-5">
+            <div class="flex flex-wrap gap-3">
+                <div class="flex-1 min-w-[200px] relative">
+                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
+                        <i class="fas fa-search text-sm"></i>
+                    </span>
+                    <input
+                        type="text"
+                        id="search-jobs"
+                        placeholder="Search jobs by title, skill..."
+                        class="input-field pl-9"
+                    >
+                </div>
+                <select id="filter-status" class="input-field w-auto flex-shrink-0">
+                    <option value="all">All Jobs</option>
+                    <option value="active">Active</option>
+                    <option value="expired">Expired</option>
+                    <option value="deleted">Deleted</option>
+                    <option value="completed">Completed</option>
+                </select>
+                <select id="sort-jobs" class="input-field w-auto flex-shrink-0">
+                    <option value="newest">Newest First</option>
+                    <option value="oldest">Oldest First</option>
+                    <option value="most-applications">Most Applications</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Jobs List -->
+        <div id="jobs-container" class="space-y-4">
+            <div class="card p-10 text-center">
+                <i class="fas fa-spinner fa-spin text-3xl text-emerald-600/40 mb-3"></i>
+                <p class="text-slate-400 text-sm">Loading your jobs...</p>
+            </div>
+        </div>
+
+        <!-- Empty State -->
+        <div id="empty-state" class="hidden card p-12 text-center">
+            <div class="w-16 h-16 bg-slate-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <i class="fas fa-briefcase text-slate-300 text-2xl"></i>
+            </div>
+            <h3 class="text-xl font-bold text-slate-700 mb-2">No Jobs Posted Yet</h3>
+            <p class="text-slate-400 text-sm mb-6">Start by posting your first job!</p>
+            <a href="post-job.html" class="inline-flex items-center gap-2 bg-emerald-600 text-white px-6 py-2.5 rounded-xl hover:bg-emerald-700 transition-all font-bold text-sm shadow-md shadow-emerald-200">
+                <i class="fas fa-plus-circle"></i>Post Your First Job
+            </a>
+        </div>
+    </div>
+
+    <!-- JavaScript (UNCHANGED) -->
+    <script type="module">
+        import { getCurrentUser, getUserData, logoutUser, checkAuthState } from '../js/auth.js';
+        import { db, collection, query, where, getDocs, orderBy, doc, updateDoc } from '../js/firebase-config.js';
+
+        let allJobs = [];
+        let currentUser = null;
+
+        checkAuthState(async (user) => {
+            if (!user) {
+                window.location.href = 'employer-login.html';
+                return;
+            }
+
+            currentUser = user;
+            const result = await getUserData(user.uid);
+
+            if (result.success) {
+                if (result.data.userType !== 'employer') {
+                    alert('⛔ Access Denied! This page is for employers only.');
+                    window.location.href = result.data.userType === 'worker' ? 'worker-dashboard.html' : 'login.html';
+                    return;
+                }
+
+                document.getElementById('user-name').textContent = result.data.fullName;
+                await loadJobs(user.uid);
+            }
+        });
+
+        document.getElementById('logout-btn').addEventListener('click', async () => {
+            if (confirm('Are you sure you want to logout?')) {
+                await logoutUser();
+                window.location.href = '../index.html';
+            }
+        });
+
+        async function loadJobs(employerId) {
+            try {
+                const jobsRef = collection(db, 'jobs');
+                const q = query(jobsRef, where('employerId', '==', employerId), orderBy('createdAt', 'desc'));
+                const querySnapshot = await getDocs(q);
+                allJobs = [];
+
+                // Today at midnight for date-only comparison
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                const expiryPromises = [];
+
+                querySnapshot.forEach((docSnap) => {
+                    const job = { id: docSnap.id, ...docSnap.data() };
+
+                    // ── Auto-expire: if jobDate exists and is before today ───────────
+                    if (job.status === 'active' && job.jobDate) {
+                        const jobDate = new Date(job.jobDate);
+                        jobDate.setHours(0, 0, 0, 0);
+                        if (jobDate < today) {
+                            expiryPromises.push(
+                                updateDoc(doc(db, 'jobs', job.id), { status: 'expired' })
+                                    .then(() => console.log(`[WorkSetu] my-jobs: job ${job.id} auto-expired`))
+                                    .catch(err => console.warn(`[WorkSetu] my-jobs: could not expire job ${job.id}:`, err))
+                            );
+                            job.status = 'expired'; // Reflect immediately in local array
+                        }
+                    }
+
+                    allJobs.push(job);
+                });
+
+                if (expiryPromises.length > 0) {
+                    Promise.all(expiryPromises).catch(err => console.error('[WorkSetu] my-jobs expiry batch error:', err));
+                }
+
+                displayJobs(allJobs);
+            } catch (error) {
+                console.error('Error loading jobs:', error);
+                document.getElementById('jobs-container').innerHTML = `
+                    <div class="card p-6 text-center">
+                        <i class="fas fa-exclamation-circle text-red-400 text-2xl mb-2"></i>
+                        <p class="text-red-600 text-sm">Error loading jobs. Please refresh the page.</p>
+                    </div>
+                `;
+            }
+        }
+
+        function displayJobs(jobs) {
+            const container = document.getElementById('jobs-container');
+            const emptyState = document.getElementById('empty-state');
+
+            if (jobs.length === 0) {
+                container.classList.add('hidden');
+                emptyState.classList.remove('hidden');
+                return;
+            }
+
+            container.classList.remove('hidden');
+            emptyState.classList.add('hidden');
+
+            container.innerHTML = jobs.map(job => {
+                const applicationsCount = job.applicationsCount || 0;
+
+                // ── Status badge: support all 4 statuses ──────────────────────────
+                const statusConfig = {
+                    active    : { cls: 'bg-emerald-100 text-emerald-700', label: 'Active'    },
+                    expired   : { cls: 'bg-amber-100  text-amber-700',   label: 'Expired'   },
+                    deleted   : { cls: 'bg-red-100    text-red-600',     label: 'Deleted'   },
+                    completed : { cls: 'bg-blue-100   text-blue-700',    label: 'Completed' }
+                };
+                const s = statusConfig[job.status] || { cls: 'bg-slate-100 text-slate-500', label: job.status || 'Unknown' };
+
+                // ── jobDate display ───────────────────────────────────────────────
+                const jobDateDisplay = job.jobDate
+                    ? `<div class="text-xs text-slate-500 flex items-center gap-1.5"><i class="fas fa-calendar-day text-emerald-600 w-3"></i>Job Date: ${new Date(job.jobDate).toLocaleDateString()}</div>`
+                    : '';
+
+                return `
+                    <div class="card p-5 hover:shadow-md transition-shadow">
+                        <div class="flex justify-between items-start mb-4">
+                            <div class="flex-1">
+                                <div class="flex items-center gap-2.5 mb-1">
+                                    <h3 class="text-lg font-bold text-slate-800">${job.title}</h3>
+                                    <span class="px-2.5 py-0.5 ${s.cls} rounded-full text-xs font-bold uppercase">
+                                        ${s.label}
+                                    </span>
+                                </div>
+                                <p class="text-slate-500 text-sm"><i class="fas fa-tools mr-1.5 text-xs"></i>${job.skillRequired}</p>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
+                            <div class="text-xs text-slate-500 flex items-center gap-1.5"><i class="fas fa-map-marker-alt text-emerald-600 w-3"></i>${job.location}</div>
+                            <div class="text-xs text-slate-500 flex items-center gap-1.5"><i class="fas fa-rupee-sign text-emerald-600 w-3"></i>${job.salary}</div>
+                            <div class="text-xs text-slate-500 flex items-center gap-1.5"><i class="fas fa-clock text-slate-400 w-3"></i>${job.jobType || 'Full Day'}</div>
+                            <div class="text-xs text-slate-500 flex items-center gap-1.5"><i class="fas fa-users text-blue-600 w-3"></i><span class="font-bold text-slate-700">${applicationsCount}</span> Applications</div>
+                            ${jobDateDisplay}
+                        </div>
+
+                        <p class="text-sm text-slate-500 mb-4 line-clamp-2">${job.description || 'No description'}</p>
+
+                        <div class="flex items-center justify-between pt-4 border-t border-slate-100">
+                            <div class="text-xs text-slate-400">
+                                <i class="fas fa-calendar mr-1"></i>Posted: ${new Date(job.createdAt).toLocaleDateString()}
+                            </div>
+
+                            <div class="flex gap-2">
+                                ${applicationsCount > 0 ? `
+                                    <a href="view-applications.html?jobId=${job.id}" class="flex items-center gap-1.5 px-3.5 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors text-sm font-bold">
+                                        <i class="fas fa-eye text-xs"></i>Applications (${applicationsCount})
+                                    </a>
+                                ` : `
+                                    <span class="px-3.5 py-2 bg-slate-100 text-slate-400 rounded-xl text-sm">No Applications Yet</span>
+                                `}
+                                ${job.status !== 'deleted' ? `
+                                    <button onclick="editJob('${job.id}')" class="w-9 h-9 bg-emerald-100 text-emerald-700 rounded-xl hover:bg-emerald-200 transition-colors flex items-center justify-center" title="Edit job">
+                                        <i class="fas fa-edit text-sm"></i>
+                                    </button>
+                                    <button onclick="deleteJob('${job.id}')" class="w-9 h-9 bg-red-100 text-red-600 rounded-xl hover:bg-red-200 transition-colors flex items-center justify-center" title="Delete job">
+                                        <i class="fas fa-trash text-sm"></i>
+                                    </button>
+                                ` : `
+                                    <span class="px-3.5 py-2 bg-red-50 text-red-400 rounded-xl text-sm italic">Deleted</span>
+                                `}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        window.editJob = function(jobId) {
+            window.location.href = `post-job.html?jobId=${jobId}`;
+        }
+
+        window.deleteJob = async function(jobId) {
+            // ── Security: verify ownership before allowing delete ──────────────────
+            const job = allJobs.find(j => j.id === jobId);
+            if (!job) {
+                alert('❌ Job not found.');
+                return;
+            }
+            if (job.employerId !== currentUser.uid) {
+                alert('⛔ You can only delete jobs you posted.');
+                return;
+            }
+            if (job.status === 'deleted') {
+                alert('This job has already been deleted.');
+                return;
+            }
+
+            if (!confirm(`Are you sure you want to delete "${job.title}"?\n\nThe job will be hidden from all worker listings.`)) { return; }
+
+            try {
+                // ── Soft delete: mark status = "deleted", never destroy data ──────
+                await updateDoc(doc(db, 'jobs', jobId), {
+                    status: 'deleted',
+                    deletedAt: new Date().toISOString()
+                });
+                // Update local array so UI reflects change immediately
+                job.status = 'deleted';
+                alert('✅ Job deleted successfully!');
+                displayJobs(allJobs);
+            } catch (error) {
+                console.error('Error deleting job:', error);
+                alert('❌ Error deleting job. Please try again.');
+            }
+        }
+
+        document.getElementById('search-jobs').addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+            const filtered = allJobs.filter(job =>
+                job.title.toLowerCase().includes(searchTerm) ||
+                job.skillRequired.toLowerCase().includes(searchTerm) ||
+                job.location.toLowerCase().includes(searchTerm)
+            );
+            displayJobs(filtered);
+        });
+
+        document.getElementById('filter-status').addEventListener('change', (e) => {
+            const status = e.target.value;
+            displayJobs(status === 'all' ? allJobs : allJobs.filter(job => job.status === status));
+        });
+
+        document.getElementById('sort-jobs').addEventListener('change', (e) => {
+            const sortBy = e.target.value;
+            let sorted = [...allJobs];
+            if (sortBy === 'newest') { sorted.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)); }
+            else if (sortBy === 'oldest') { sorted.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt)); }
+            else if (sortBy === 'most-applications') { sorted.sort((a, b) => (b.applicationsCount || 0) - (a.applicationsCount || 0)); }
+            displayJobs(sorted);
+        });
+    </script>
+</body>
+</html>

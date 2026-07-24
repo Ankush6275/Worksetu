@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Applications - WorkSetu</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gray-50">
+    
+    <!-- Navigation Bar -->
+    <nav class="bg-white shadow-md sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-4">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center space-x-2">
+                    <i class="fas fa-briefcase text-blue-600 text-2xl"></i>
+                    <h1 class="text-2xl font-bold text-gray-800">WorkSetu</h1>
+                </div>
+                
+                <div class="hidden md:flex space-x-6">
+                    <a href="worker-dashboard.html" class="text-gray-600 hover:text-blue-600 transition">
+                        <i class="fas fa-home mr-1"></i>Dashboard
+                    </a>
+                    <a href="browse-jobs.html" class="text-gray-600 hover:text-blue-600 transition">
+                        <i class="fas fa-search mr-1"></i>Browse Jobs
+                    </a>
+                    <a href="#" class="text-blue-600 font-semibold border-b-2 border-blue-600 pb-1">
+                        <i class="fas fa-file-alt mr-1"></i>My Applications
+                    </a>
+                </div>
+                
+                <div class="flex items-center space-x-4">
+                    <div class="relative">
+                        <button id="profile-menu-btn" class="flex items-center space-x-2 text-gray-700 hover:text-blue-600">
+                            <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                                <i class="fas fa-user text-blue-600"></i>
+                            </div>
+                            <span id="user-name-nav" class="hidden md:block font-medium">Loading...</span>
+                            <i class="fas fa-chevron-down text-sm"></i>
+                        </button>
+                        
+                        <div id="profile-dropdown" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2">
+                            <a href="worker-dashboard.html" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">
+                                <i class="fas fa-home mr-2"></i>Dashboard
+                            </a>
+                            <a href="#profile" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">
+                                <i class="fas fa-user mr-2"></i>My Profile
+                            </a>
+                            <hr class="my-2">
+                            <button id="logout-btn" class="w-full text-left px-4 py-2 text-red-600 hover:bg-red-50">
+                                <i class="fas fa-sign-out-alt mr-2"></i>Logout
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container mx-auto px-4 py-8">
+        
+        <!-- Page Header -->
+        <div class="bg-gradient-to-r from-blue-500 to-blue-700 rounded-lg shadow-md p-6 text-white mb-6">
+            <h1 class="text-3xl font-bold mb-2">My Applications 📋</h1>
+            <p class="text-blue-100">Track all your job applications in one place</p>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="grid md:grid-cols-4 gap-4 mb-6">
+            <div class="bg-white rounded-lg shadow-md p-6 text-center">
+                <div class="text-3xl font-bold text-blue-600 mb-2" id="total-applications">0</div>
+                <p class="text-gray-600 text-sm">Total Applications</p>
+            </div>
+            <div class="bg-white rounded-lg shadow-md p-6 text-center">
+                <div class="text-3xl font-bold text-yellow-600 mb-2" id="pending-applications">0</div>
+                <p class="text-gray-600 text-sm">Pending</p>
+            </div>
+            <div class="bg-white rounded-lg shadow-md p-6 text-center">
+                <div class="text-3xl font-bold text-green-600 mb-2" id="accepted-applications">0</div>
+                <p class="text-gray-600 text-sm">Accepted</p>
+            </div>
+            <div class="bg-white rounded-lg shadow-md p-6 text-center">
+                <div class="text-3xl font-bold text-red-600 mb-2" id="rejected-applications">0</div>
+                <p class="text-gray-600 text-sm">Rejected</p>
+            </div>
+        </div>
+
+        <!-- Filter Tabs -->
+        <div class="bg-white rounded-lg shadow-md p-4 mb-6">
+            <div class="flex flex-wrap gap-2">
+                <button onclick="filterApplications('all')" class="filter-btn px-4 py-2 rounded-lg font-medium transition bg-blue-600 text-white">
+                    All Applications
+                </button>
+                <button onclick="filterApplications('pending')" class="filter-btn px-4 py-2 rounded-lg font-medium transition bg-gray-200 text-gray-700 hover:bg-gray-300">
+                    Pending
+                </button>
+                <button onclick="filterApplications('accepted')" class="filter-btn px-4 py-2 rounded-lg font-medium transition bg-gray-200 text-gray-700 hover:bg-gray-300">
+                    Accepted
+                </button>
+                <button onclick="filterApplications('rejected')" class="filter-btn px-4 py-2 rounded-lg font-medium transition bg-gray-200 text-gray-700 hover:bg-gray-300">
+                    Rejected
+                </button>
+            </div>
+        </div>
+
+        <!-- Applications List -->
+        <div id="applications-container" class="space-y-4">
+            <!-- Loading state -->
+            <div class="text-center py-12">
+                <i class="fas fa-spinner fa-spin text-4xl text-blue-600 mb-4"></i>
+                <p class="text-gray-600">Loading your applications...</p>
+            </div>
+        </div>
+
+        <!-- No Applications State -->
+        <div id="no-applications" class="hidden bg-white rounded-lg shadow-md p-12 text-center">
+            <i class="fas fa-inbox text-6xl text-gray-300 mb-4"></i>
+            <h3 class="text-xl font-semibold text-gray-800 mb-2">No Applications Yet</h3>
+            <p class="text-gray-600 mb-4">Start applying to jobs to see them here!</p>
+            <a href="browse-jobs.html" class="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition font-semibold">
+                <i class="fas fa-search mr-2"></i>Browse Jobs
+            </a>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script type="module">
+        import { getCurrentUser, getUserData, logoutUser, checkAuthState } from '../js/auth.js';
+        import { db, collection, query, where, getDocs, orderBy, doc, getDoc } from '../js/firebase-config.js';
+        import { getWorkerApplications } from "../js/applications.js";
+        import { auth } from "../js/firebase-config.js";
+        auth.onAuthStateChanged(async (user) => {
+  if (!user) return;
+
+  loadApplications(user.uid);
+});
+
+let allApplications = [];
+
+async function loadApplications(workerId) {
+  try {
+    const container = document.getElementById('applications-container');
+    container.innerHTML = "Loading...";
+
+    const applicationsRef = collection(db, 'applications');
+    const q = query(
+      applicationsRef,
+      where('workerId', '==', workerId),
+      orderBy('appliedAt', 'desc')
+    );
+
+    const querySnapshot = await getDocs(q);
+
+    if (querySnapshot.empty) {
+      container.classList.add('hidden');
+      document.getElementById('no-applications').classList.remove('hidden');
+      return;
+    }
+
+    allApplications = [];
+
+    for (const docSnap of querySnapshot.docs) {
+      const application = docSnap.data();
+
+      const jobDoc = await getDoc(doc(db, 'jobs', application.jobId));
+      const jobData = jobDoc.exists() ? jobDoc.data() : null;
+
+      allApplications.push({
+        id: docSnap.id,
+        ...application,
+        job: jobData
+      });
+    }
+
+    updateStats();
+    displayApplications(allApplications);
+
+  } catch (error) {
+    console.error('Error loading applications:', error);
+    document.getElementById('applications-container').innerHTML = `
+      <div class="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
+        <p class="text-red-700">Error loading applications. Please refresh.</p>
+      </div>
+    `;
+  }
+}
+
+        
+        function updateStats() {
+            const total = allApplications.length;
+            const pending = allApplications.filter(a => a.status === 'pending').length;
+            const accepted = allApplications.filter(a => a.status === 'accepted').length;
+            const rejected = allApplications.filter(a => a.status === 'rejected').length;
+            
+            document.getElementById('total-applications').textContent = total;
+            document.getElementById('pending-applications').textContent = pending;
+            document.getElementById('accepted-applications').textContent = accepted;
+            document.getElementById('rejected-applications').textContent = rejected;
+        }
+        
+        window.filterApplications = function(filter) {
+            currentFilter = filter;
+            
+            // Update button styles
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('bg-blue-600', 'text-white');
+                btn.classList.add('bg-gray-200', 'text-gray-700');
+            });
+            event.target.classList.remove('bg-gray-200', 'text-gray-700');
+            event.target.classList.add('bg-blue-600', 'text-white');
+            
+            // Filter applications
+            let filtered = allApplications;
+            if (filter !== 'all') {
+                filtered = allApplications.filter(a => a.status === filter);
+            }
+            
+            displayApplications(filtered);
+        }
+        
+        function displayApplications(applications) {
+            const container = document.getElementById('applications-container');
+            
+            if (applications.length === 0) {
+                container.innerHTML = `
+                    <div class="bg-white rounded-lg shadow-md p-12 text-center">
+                        <i class="fas fa-filter text-5xl text-gray-300 mb-4"></i>
+                        <p class="text-gray-600">No applications found for this filter</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.classList.remove('hidden');
+            container.innerHTML = applications.map(app => createApplicationCard(app)).join('');
+        }
+        
+        function createApplicationCard(app) {
+            const statusColors = {
+                pending: 'bg-yellow-100 text-yellow-700 border-yellow-300',
+                accepted: 'bg-green-100 text-green-700 border-green-300',
+                rejected: 'bg-red-100 text-red-700 border-red-300'
+            };
+            
+            const statusIcons = {
+                pending: 'fa-clock',
+                accepted: 'fa-check-circle',
+                rejected: 'fa-times-circle'
+            };
+            
+            const statusColor = statusColors[app.status] || statusColors.pending;
+            const statusIcon = statusIcons[app.status] || statusIcons.pending;
+            
+            return `
+                <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition">
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="flex-1">
+                            <h3 class="text-xl font-semibold text-gray-800 mb-2">
+                                ${app.job ? app.job.title : 'Job Not Found'}
+                            </h3>
+                            <p class="text-gray-600 mb-2">
+                                <i class="fas fa-building mr-2"></i>${app.job ? (app.job.businessName || app.job.employerName) : 'N/A'}
+                            </p>
+                        </div>
+                        <span class="${statusColor} px-4 py-2 rounded-full text-sm font-semibold border-2 flex items-center space-x-2">
+                            <i class="fas ${statusIcon}"></i>
+                            <span>${app.status.charAt(0).toUpperCase() + app.status.slice(1)}</span>
+                        </span>
+                    </div>
+                    
+                    ${app.job ? `
+                    <div class="grid md:grid-cols-3 gap-3 mb-4 text-sm">
+                        <div class="text-gray-600">
+                            <i class="fas fa-map-marker-alt text-blue-600 mr-1"></i>
+                            ${app.job.location}
+                        </div>
+                        <div class="text-green-600 font-semibold">
+                            <i class="fas fa-rupee-sign mr-1"></i>
+                            ${app.job.salary}
+                        </div>
+                        <div class="text-gray-600">
+                            <i class="fas fa-clock mr-1"></i>
+                            ${app.job.jobType}
+                        </div>
+                    </div>
+                    ` : ''}
+                    
+                    <div class="bg-gray-50 rounded-lg p-4 mb-4">
+                        <h4 class="font-semibold text-gray-800 mb-2">Your Message:</h4>
+                        <p class="text-gray-700 text-sm">${app.message || 'No message provided'}</p>
+                    </div>
+                    
+                    <div class="flex justify-between items-center text-sm text-gray-600">
+                        <div>
+                            <i class="far fa-calendar mr-1"></i>
+                            Applied: ${new Date(app.appliedAt).toLocaleDateString()}
+                        </div>
+                        ${app.respondedAt ? `
+                        <div>
+                            <i class="far fa-clock mr-1"></i>
+                            Response: ${new Date(app.respondedAt).toLocaleDateString()}
+                        </div>
+                        ` : ''}
+                    </div>
+                    
+                    ${app.status === 'accepted' && app.job ? `
+                    <div class="mt-4 p-4 bg-green-50 border-2 border-green-200 rounded-lg">
+                        <h4 class="font-semibold text-green-800 mb-2">
+                            <i class="fas fa-party-horn mr-2"></i>Congratulations! Your application was accepted!
+                        </h4>
+                        <p class="text-sm text-gray-700 mb-2">Contact the employer:</p>
+                        <p class="text-sm"><strong>Phone:</strong> ${app.job.contactNumber}</p>
+                        ${app.job.contactPerson ? `<p class="text-sm"><strong>Contact Person:</strong> ${app.job.contactPerson}</p>` : ''}
+                    </div>
+                    ` : ''}
+                    
+                    ${app.status === 'rejected' && app.rejectionReason ? `
+                    <div class="mt-4 p-4 bg-red-50 border-2 border-red-200 rounded-lg">
+                        <h4 class="font-semibold text-red-800 mb-2">Reason for Rejection:</h4>
+                        <p class="text-sm text-gray-700">${app.rejectionReason}</p>
+                    </div>
+                    ` : ''}
+                </div>
+            `;
+        }
+    </script>
+
+</body>
+</html>

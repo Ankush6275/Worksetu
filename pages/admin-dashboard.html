@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - WorkSetu</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { primary: '#6366F1', secondary: '#10B981', surface: '#F8FAFC' },
+                    fontFamily: { display: ['Sora','sans-serif'], body: ['DM Sans','sans-serif'] }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'DM Sans', sans-serif; background: #F8FAFC; }
+        h1,h2,h3 { font-family: 'Sora', sans-serif; }
+        .card { background: white; border-radius: 1.25rem; border: 1px solid #E2E8F0; }
+        /* Active tab styling */
+        .tab-btn { transition: all 0.2s; border-bottom: 2px solid transparent; padding: 0.875rem 1.25rem; font-size: 0.875rem; }
+        .tab-btn.active { color: #6366F1; border-bottom-color: #6366F1; font-weight: 600; }
+        .tab-btn:not(.active) { color: #64748B; }
+        .tab-btn:not(.active):hover { color: #334155; }
+    </style>
+</head>
+<body>
+
+    <!-- ===== NAVIGATION ===== -->
+    <!-- UI UPGRADED: Indigo gradient admin nav -->
+    <nav class="bg-gradient-to-r from-indigo-700 to-violet-700 sticky top-0 z-50 shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 py-3">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 bg-white/20 rounded-xl flex items-center justify-center border border-white/25">
+                        <i class="fas fa-shield-alt text-white text-sm"></i>
+                    </div>
+                    <div>
+                        <span class="text-white font-bold text-lg" style="font-family:'Sora',sans-serif">WorkSetu</span>
+                        <span class="text-white/60 text-xs ml-2 font-medium">Admin Panel</span>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-3">
+                    <div class="flex items-center gap-2 bg-white/10 rounded-xl px-3 py-2 border border-white/20">
+                        <i class="fas fa-user-shield text-white/70 text-sm"></i>
+                        <span class="text-white text-sm font-medium" id="admin-name">Administrator</span>
+                    </div>
+                    <button id="logout-btn" class="bg-white text-indigo-700 px-4 py-2 rounded-xl hover:bg-indigo-50 transition-colors font-bold text-sm shadow-md">
+                        <i class="fas fa-sign-out-alt mr-1.5"></i>Logout
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ===== MAIN CONTENT ===== -->
+    <div class="max-w-7xl mx-auto px-4 py-6">
+
+        <!-- Page Header -->
+        <div class="mb-6">
+            <h1 class="text-2xl font-bold text-slate-800 flex items-center gap-2.5">
+                <i class="fas fa-chart-line text-primary"></i>Platform Overview
+            </h1>
+            <p class="text-slate-500 text-sm mt-1">Monitor and manage your WorkSetu platform</p>
+        </div>
+
+        <!-- ===== STATISTICS CARDS ===== -->
+        <!-- UI UPGRADED: Colorful gradient stat cards with icons -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+            <div class="bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl p-5 text-white shadow-lg shadow-blue-200">
+                <div class="flex justify-between items-start mb-3">
+                    <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-users text-lg"></i>
+                    </div>
+                    <span class="text-xs bg-white/20 px-2 py-0.5 rounded-full">Total</span>
+                </div>
+                <div class="text-3xl font-bold mb-0.5" id="total-users">0</div>
+                <div class="text-blue-100 text-sm">Total Users</div>
+            </div>
+
+            <div class="bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-2xl p-5 text-white shadow-lg shadow-emerald-200">
+                <div class="flex justify-between items-start mb-3">
+                    <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-user-hard-hat text-lg"></i>
+                    </div>
+                    <span class="text-xs bg-white/20 px-2 py-0.5 rounded-full">Active</span>
+                </div>
+                <div class="text-3xl font-bold mb-0.5" id="total-workers">0</div>
+                <div class="text-emerald-100 text-sm">Workers</div>
+            </div>
+
+            <div class="bg-gradient-to-br from-violet-500 to-violet-600 rounded-2xl p-5 text-white shadow-lg shadow-violet-200">
+                <div class="flex justify-between items-start mb-3">
+                    <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-building text-lg"></i>
+                    </div>
+                    <span class="text-xs bg-white/20 px-2 py-0.5 rounded-full">Active</span>
+                </div>
+                <div class="text-3xl font-bold mb-0.5" id="total-employers">0</div>
+                <div class="text-violet-100 text-sm">Employers</div>
+            </div>
+
+            <div class="bg-gradient-to-br from-orange-500 to-orange-600 rounded-2xl p-5 text-white shadow-lg shadow-orange-200">
+                <div class="flex justify-between items-start mb-3">
+                    <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-briefcase text-lg"></i>
+                    </div>
+                    <span class="text-xs bg-white/20 px-2 py-0.5 rounded-full">Live</span>
+                </div>
+                <div class="text-3xl font-bold mb-0.5" id="total-jobs">0</div>
+                <div class="text-orange-100 text-sm">Active Jobs</div>
+            </div>
+        </div>
+
+        <!-- Secondary Stats -->
+        <div class="grid md:grid-cols-3 gap-4 mb-6">
+            <div class="card p-5">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="font-bold text-slate-800 text-sm">Applications</h3>
+                    <div class="w-9 h-9 bg-blue-100 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-file-alt text-blue-600 text-sm"></i>
+                    </div>
+                </div>
+                <div class="space-y-2.5">
+                    <div class="flex justify-between items-center text-sm">
+                        <span class="text-slate-500">Total</span>
+                        <span class="font-bold text-slate-800" id="total-applications">0</span>
+                    </div>
+                    <div class="flex justify-between items-center text-sm">
+                        <span class="text-slate-500">Pending</span>
+                        <span class="font-semibold text-amber-600" id="pending-applications">0</span>
+                    </div>
+                    <div class="flex justify-between items-center text-sm">
+                        <span class="text-slate-500">Accepted</span>
+                        <span class="font-semibold text-emerald-600" id="accepted-applications">0</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card p-5">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="font-bold text-slate-800 text-sm">Recent Activity</h3>
+                    <div class="w-9 h-9 bg-emerald-100 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-clock text-emerald-600 text-sm"></i>
+                    </div>
+                </div>
+                <div class="space-y-2.5">
+                    <div class="flex justify-between items-center text-sm">
+                        <span class="text-slate-500">Today</span>
+                        <span class="font-bold text-slate-800" id="today-activity">0</span>
+                    </div>
+                    <div class="flex justify-between items-center text-sm">
+                        <span class="text-slate-500">This Week</span>
+                        <span class="font-semibold text-slate-600" id="week-activity">0</span>
+                    </div>
+                    <div class="flex justify-between items-center text-sm">
+                        <span class="text-slate-500">This Month</span>
+                        <span class="font-semibold text-slate-600" id="month-activity">0</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card p-5">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="font-bold text-slate-800 text-sm">Platform Health</h3>
+                    <div class="w-9 h-9 bg-red-100 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-heartbeat text-red-500 text-sm"></i>
+                    </div>
+                </div>
+                <div class="space-y-2.5">
+                    <div class="flex justify-between items-center text-sm">
+                        <span class="text-slate-500">Status</span>
+                        <span class="px-2.5 py-0.5 bg-emerald-100 text-emerald-700 rounded-full text-xs font-bold">Healthy</span>
+                    </div>
+                    <div class="flex justify-between items-center text-sm">
+                        <span class="text-slate-500">Active Rate</span>
+                        <span class="font-semibold text-emerald-600" id="active-rate">0%</span>
+                    </div>
+                    <div class="flex justify-between items-center text-sm">
+                        <span class="text-slate-500">Success Rate</span>
+                        <span class="font-semibold text-emerald-600" id="success-rate">0%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== TABS ===== -->
+        <!-- UI UPGRADED: Clean pill-style tabs -->
+        <div class="card mb-5">
+            <div class="border-b border-slate-100 px-2">
+                <div class="flex gap-1 overflow-x-auto">
+                    <button onclick="showTab('users', this)" class="tab-btn active whitespace-nowrap">
+                        <i class="fas fa-users mr-2"></i>Users
+                    </button>
+                    <button onclick="showTab('jobs', this)" class="tab-btn whitespace-nowrap">
+                        <i class="fas fa-briefcase mr-2"></i>Jobs
+                    </button>
+                    <button onclick="showTab('applications', this)" class="tab-btn whitespace-nowrap">
+                        <i class="fas fa-file-alt mr-2"></i>Applications
+                    </button>
+                    <button onclick="showTab('analytics', this)" class="tab-btn whitespace-nowrap">
+                        <i class="fas fa-chart-bar mr-2"></i>Analytics
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== TAB CONTENT ===== -->
+        <div id="tab-content">
+
+            <!-- Users Tab -->
+            <div id="users-tab" class="tab-content">
+                <div class="card p-5">
+                    <div class="flex flex-wrap justify-between items-center gap-3 mb-5">
+                        <h2 class="font-bold text-slate-800 flex items-center gap-2">
+                            <i class="fas fa-users text-primary"></i>All Users
+                        </h2>
+                        <div class="flex gap-2">
+                            <select id="user-filter" class="px-3 py-2 border border-slate-200 rounded-xl text-sm text-slate-600 focus:outline-none focus:ring-2 focus:ring-primary bg-slate-50">
+                                <option value="all">All Users</option>
+                                <option value="worker">Workers</option>
+                                <option value="employer">Employers</option>
+                            </select>
+                            <input type="text" id="user-search" placeholder="Search users..."
+                                class="px-3 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary bg-slate-50">
+                        </div>
+                    </div>
+
+                    <div class="overflow-x-auto rounded-xl border border-slate-100">
+                        <table class="w-full">
+                            <thead class="bg-slate-50">
+                                <tr>
+                                    <th class="px-4 py-3 text-left text-xs font-bold text-slate-500 uppercase tracking-wide">User</th>
+                                    <th class="px-4 py-3 text-left text-xs font-bold text-slate-500 uppercase tracking-wide">Email</th>
+                                    <th class="px-4 py-3 text-left text-xs font-bold text-slate-500 uppercase tracking-wide">Type</th>
+                                    <th class="px-4 py-3 text-left text-xs font-bold text-slate-500 uppercase tracking-wide">Location</th>
+                                    <th class="px-4 py-3 text-left text-xs font-bold text-slate-500 uppercase tracking-wide">Trust</th>
+                                    <th class="px-4 py-3 text-left text-xs font-bold text-slate-500 uppercase tracking-wide">Status</th>
+                                    <th class="px-4 py-3 text-left text-xs font-bold text-slate-500 uppercase tracking-wide">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="users-table-body" class="divide-y divide-slate-100">
+                                <tr>
+                                    <td colspan="7" class="px-4 py-10 text-center text-slate-400">
+                                        <i class="fas fa-spinner fa-spin text-2xl mb-2 text-primary/40"></i>
+                                        <p class="text-sm">Loading users...</p>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Jobs Tab -->
+            <div id="jobs-tab" class="tab-content hidden">
+                <div class="card p-5">
+                    <div class="flex justify-between items-center gap-3 mb-5">
+                        <h2 class="font-bold text-slate-800 flex items-center gap-2">
+                            <i class="fas fa-briefcase text-primary"></i>All Jobs
+                        </h2>
+                        <select id="job-filter" class="px-3 py-2 border border-slate-200 rounded-xl text-sm text-slate-600 focus:outline-none focus:ring-2 focus:ring-primary bg-slate-50">
+                            <option value="all">All Jobs</option>
+                            <option value="active">Active</option>
+                            <option value="inactive">Inactive</option>
+                        </select>
+                    </div>
+
+                    <div class="space-y-3" id="jobs-container">
+                        <div class="text-center py-8 text-slate-400">
+                            <i class="fas fa-spinner fa-spin text-2xl mb-2 text-primary/40"></i>
+                            <p class="text-sm">Loading jobs...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Applications Tab -->
+            <div id="applications-tab" class="tab-content hidden">
+                <div class="card p-5">
+                    <div class="flex justify-between items-center gap-3 mb-5">
+                        <h2 class="font-bold text-slate-800 flex items-center gap-2">
+                            <i class="fas fa-file-alt text-primary"></i>All Applications
+                        </h2>
+                        <select id="app-filter" class="px-3 py-2 border border-slate-200 rounded-xl text-sm text-slate-600 focus:outline-none focus:ring-2 focus:ring-primary bg-slate-50">
+                            <option value="all">All Applications</option>
+                            <option value="pending">Pending</option>
+                            <option value="accepted">Accepted</option>
+                            <option value="rejected">Rejected</option>
+                        </select>
+                    </div>
+
+                    <div class="space-y-3" id="applications-container">
+                        <div class="text-center py-8 text-slate-400">
+                            <i class="fas fa-spinner fa-spin text-2xl mb-2 text-primary/40"></i>
+                            <p class="text-sm">Loading applications...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Analytics Tab -->
+            <div id="analytics-tab" class="tab-content hidden">
+                <div class="grid md:grid-cols-2 gap-5">
+                    <div class="card p-5">
+                        <h3 class="font-bold text-slate-800 mb-5 flex items-center gap-2">
+                            <i class="fas fa-chart-pie text-primary"></i>User Distribution
+                        </h3>
+                        <div class="space-y-4">
+                            <div>
+                                <div class="flex justify-between items-center mb-1.5">
+                                    <span class="text-sm text-slate-500">Workers</span>
+                                    <span class="text-sm font-bold text-slate-700" id="worker-percentage">0%</span>
+                                </div>
+                                <div class="w-full bg-slate-100 rounded-full h-2.5">
+                                    <div id="worker-bar" class="bg-emerald-500 h-2.5 rounded-full transition-all duration-700" style="width: 0%"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between items-center mb-1.5">
+                                    <span class="text-sm text-slate-500">Employers</span>
+                                    <span class="text-sm font-bold text-slate-700" id="employer-percentage">0%</span>
+                                </div>
+                                <div class="w-full bg-slate-100 rounded-full h-2.5">
+                                    <div id="employer-bar" class="bg-violet-500 h-2.5 rounded-full transition-all duration-700" style="width: 0%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card p-5">
+                        <h3 class="font-bold text-slate-800 mb-5 flex items-center gap-2">
+                            <i class="fas fa-chart-line text-primary"></i>Application Stats
+                        </h3>
+                        <div class="space-y-4">
+                            <div>
+                                <div class="flex justify-between items-center mb-1.5">
+                                    <span class="text-sm text-slate-500">Pending</span>
+                                    <span class="text-sm font-bold text-slate-700" id="pending-percentage">0%</span>
+                                </div>
+                                <div class="w-full bg-slate-100 rounded-full h-2.5">
+                                    <div id="pending-bar" class="bg-amber-500 h-2.5 rounded-full transition-all duration-700" style="width: 0%"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between items-center mb-1.5">
+                                    <span class="text-sm text-slate-500">Accepted</span>
+                                    <span class="text-sm font-bold text-slate-700" id="accepted-percentage">0%</span>
+                                </div>
+                                <div class="w-full bg-slate-100 rounded-full h-2.5">
+                                    <div id="accepted-bar" class="bg-emerald-500 h-2.5 rounded-full transition-all duration-700" style="width: 0%"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between items-center mb-1.5">
+                                    <span class="text-sm text-slate-500">Rejected</span>
+                                    <span class="text-sm font-bold text-slate-700" id="rejected-percentage">0%</span>
+                                </div>
+                                <div class="w-full bg-slate-100 rounded-full h-2.5">
+                                    <div id="rejected-bar" class="bg-red-500 h-2.5 rounded-full transition-all duration-700" style="width: 0%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card p-5">
+                        <h3 class="font-bold text-slate-800 mb-4 flex items-center gap-2">
+                            <i class="fas fa-tools text-primary"></i>Top Skills
+                        </h3>
+                        <div id="top-skills-container" class="space-y-2">
+                            <p class="text-slate-400 text-sm">Loading...</p>
+                        </div>
+                    </div>
+
+                    <div class="card p-5">
+                        <h3 class="font-bold text-slate-800 mb-4 flex items-center gap-2">
+                            <i class="fas fa-map-marker-alt text-primary"></i>Top Locations
+                        </h3>
+                        <div id="top-locations-container" class="space-y-2">
+                            <p class="text-slate-400 text-sm">Loading...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript (UNCHANGED - same logic) -->
+    <script type="module">
+        import { getCurrentUser, getUserData, logoutUser, checkAuthState } from '../js/auth.js';
+        import { db, collection, getDocs, doc, updateDoc, query, where } from '../js/firebase-config.js';
+
+        let allUsers = [];
+        let allJobs = [];
+        let allApplications = [];
+
+        checkAuthState(async (user) => {
+            if (!user) {
+                alert('Please login to access admin dashboard');
+                window.location.href = 'login.html';
+                return;
+            }
+
+            const result = await getUserData(user.uid);
+            if (result.success) {
+                document.getElementById('admin-name').textContent = result.data.fullName;
+            }
+
+            await loadAllData();
+        });
+
+        document.getElementById('logout-btn').addEventListener('click', async () => {
+            if (confirm('Logout from admin dashboard?')) {
+                await logoutUser();
+                window.location.href = '../index.html';
+            }
+        });
+
+        async function loadAllData() {
+            await Promise.all([loadUsers(), loadJobs(), loadApplications()]);
+            updateStatistics();
+            updateAnalytics();
+        }
+
+        async function loadUsers() {
+            try {
+                const usersSnapshot = await getDocs(collection(db, 'users'));
+                allUsers = [];
+                usersSnapshot.forEach(doc => { allUsers.push({ id: doc.id, ...doc.data() }); });
+                displayUsers(allUsers);
+            } catch (error) { console.error('Error loading users:', error); }
+        }
+
+        async function loadJobs() {
+            try {
+                const jobsSnapshot = await getDocs(collection(db, 'jobs'));
+                allJobs = [];
+                jobsSnapshot.forEach(doc => { allJobs.push({ id: doc.id, ...doc.data() }); });
+                displayJobs(allJobs);
+            } catch (error) { console.error('Error loading jobs:', error); }
+        }
+
+        async function loadApplications() {
+            try {
+                const appsSnapshot = await getDocs(collection(db, 'applications'));
+                allApplications = [];
+                appsSnapshot.forEach(doc => { allApplications.push({ id: doc.id, ...doc.data() }); });
+                displayApplications(allApplications);
+            } catch (error) { console.error('Error loading applications:', error); }
+        }
+
+        function updateStatistics() {
+            const workers = allUsers.filter(u => u.userType === 'worker');
+            const employers = allUsers.filter(u => u.userType === 'employer');
+            const activeJobs = allJobs.filter(j => j.status === 'active');
+            const pending = allApplications.filter(a => a.status === 'pending');
+            const accepted = allApplications.filter(a => a.status === 'accepted');
+
+            document.getElementById('total-users').textContent = allUsers.length;
+            document.getElementById('total-workers').textContent = workers.length;
+            document.getElementById('total-employers').textContent = employers.length;
+            document.getElementById('total-jobs').textContent = activeJobs.length;
+            document.getElementById('total-applications').textContent = allApplications.length;
+            document.getElementById('pending-applications').textContent = pending.length;
+            document.getElementById('accepted-applications').textContent = accepted.length;
+
+            const activeRate = allUsers.length > 0 ? ((workers.length + employers.length) / allUsers.length * 100).toFixed(0) : 0;
+            const successRate = allApplications.length > 0 ? (accepted.length / allApplications.length * 100).toFixed(0) : 0;
+            document.getElementById('active-rate').textContent = activeRate + '%';
+            document.getElementById('success-rate').textContent = successRate + '%';
+
+            const now = new Date();
+            const today = allApplications.filter(a => { const date = new Date(a.appliedAt); return date.toDateString() === now.toDateString(); });
+            document.getElementById('today-activity').textContent = today.length;
+            document.getElementById('week-activity').textContent = allApplications.filter(a => { const date = new Date(a.appliedAt); return (now - date) < 7 * 24 * 60 * 60 * 1000; }).length;
+            document.getElementById('month-activity').textContent = allApplications.filter(a => { const date = new Date(a.appliedAt); return (now - date) < 30 * 24 * 60 * 60 * 1000; }).length;
+        }
+
+        function updateAnalytics() {
+            const workers = allUsers.filter(u => u.userType === 'worker').length;
+            const employers = allUsers.filter(u => u.userType === 'employer').length;
+            const total = allUsers.length || 1;
+            const workerPct = (workers / total * 100).toFixed(0);
+            const employerPct = (employers / total * 100).toFixed(0);
+
+            document.getElementById('worker-percentage').textContent = workerPct + '%';
+            document.getElementById('employer-percentage').textContent = employerPct + '%';
+            document.getElementById('worker-bar').style.width = workerPct + '%';
+            document.getElementById('employer-bar').style.width = employerPct + '%';
+
+            const totalApps = allApplications.length || 1;
+            const pending = allApplications.filter(a => a.status === 'pending').length;
+            const accepted = allApplications.filter(a => a.status === 'accepted').length;
+            const rejected = allApplications.filter(a => a.status === 'rejected').length;
+
+            const pendingPct = (pending / totalApps * 100).toFixed(0);
+            const acceptedPct = (accepted / totalApps * 100).toFixed(0);
+            const rejectedPct = (rejected / totalApps * 100).toFixed(0);
+
+            document.getElementById('pending-percentage').textContent = pendingPct + '%';
+            document.getElementById('accepted-percentage').textContent = acceptedPct + '%';
+            document.getElementById('rejected-percentage').textContent = rejectedPct + '%';
+            document.getElementById('pending-bar').style.width = pendingPct + '%';
+            document.getElementById('accepted-bar').style.width = acceptedPct + '%';
+            document.getElementById('rejected-bar').style.width = rejectedPct + '%';
+
+            const skills = {};
+            allUsers.filter(u => u.skills).forEach(u => { u.skills.forEach(skill => { skills[skill] = (skills[skill] || 0) + 1; }); });
+            const topSkills = Object.entries(skills).sort((a, b) => b[1] - a[1]).slice(0, 5);
+            document.getElementById('top-skills-container').innerHTML = topSkills.length > 0
+                ? topSkills.map(([skill, count]) => `
+                    <div class="flex justify-between items-center py-1">
+                        <span class="text-sm text-slate-600">${skill}</span>
+                        <span class="px-2 py-0.5 bg-blue-100 text-blue-700 rounded-full text-xs font-bold">${count}</span>
+                    </div>
+                `).join('')
+                : '<p class="text-slate-400 text-sm">No skills data</p>';
+
+            const locations = {};
+            allUsers.forEach(u => { if (u.location) { const city = u.location.split(',')[0].trim(); locations[city] = (locations[city] || 0) + 1; } });
+            const topLocations = Object.entries(locations).sort((a, b) => b[1] - a[1]).slice(0, 5);
+            document.getElementById('top-locations-container').innerHTML = topLocations.length > 0
+                ? topLocations.map(([loc, count]) => `
+                    <div class="flex justify-between items-center py-1">
+                        <span class="text-sm text-slate-600">${loc}</span>
+                        <span class="px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded-full text-xs font-bold">${count}</span>
+                    </div>
+                `).join('')
+                : '<p class="text-slate-400 text-sm">No location data</p>';
+        }
+
+        function displayUsers(users) {
+            const tbody = document.getElementById('users-table-body');
+            if (users.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" class="px-4 py-8 text-center text-slate-400 text-sm">No users found</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = users.map(user => {
+                const isWorker = user.userType === 'worker';
+                return `
+                <tr class="hover:bg-slate-50 transition-colors">
+                    <td class="px-4 py-3">
+                        <div class="flex items-center gap-3">
+                            <div class="w-9 h-9 ${isWorker ? 'bg-emerald-100' : 'bg-violet-100'} rounded-xl flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-${isWorker ? 'user' : 'building'} ${isWorker ? 'text-emerald-600' : 'text-violet-600'} text-sm"></i>
+                            </div>
+                            <div>
+                                <div class="font-semibold text-slate-800 text-sm">${user.fullName}</div>
+                                <div class="text-xs text-slate-400">${user.id.substring(0, 8)}...</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-4 py-3 text-sm text-slate-500">${user.email}</td>
+                    <td class="px-4 py-3">
+                        <span class="px-2.5 py-0.5 ${isWorker ? 'bg-emerald-100 text-emerald-700' : 'bg-violet-100 text-violet-700'} rounded-full text-xs font-bold">
+                            ${user.userType}
+                        </span>
+                    </td>
+                    <td class="px-4 py-3 text-sm text-slate-500">${user.location || 'N/A'}</td>
+                    <td class="px-4 py-3">
+                        <span class="text-sm font-bold ${(user.trustScore || 50) >= 70 ? 'text-emerald-600' : (user.trustScore || 50) >= 50 ? 'text-amber-600' : 'text-red-600'}">
+                            ${user.trustScore || 50}
+                        </span>
+                        <span class="text-xs text-slate-400">/100</span>
+                    </td>
+                    <td class="px-4 py-3">
+                        <span class="px-2.5 py-0.5 bg-emerald-100 text-emerald-700 rounded-full text-xs font-bold">Active</span>
+                    </td>
+                    <td class="px-4 py-3">
+                        <div class="flex gap-2">
+                            <button onclick="viewUser('${user.id}')" class="w-7 h-7 bg-blue-50 text-primary rounded-lg hover:bg-blue-100 transition-colors flex items-center justify-center" title="View">
+                                <i class="fas fa-eye text-xs"></i>
+                            </button>
+                            <button onclick="suspendUser('${user.id}')" class="w-7 h-7 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors flex items-center justify-center" title="Suspend">
+                                <i class="fas fa-ban text-xs"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `}).join('');
+        }
+
+        function displayJobs(jobs) {
+            const container = document.getElementById('jobs-container');
+            if (jobs.length === 0) {
+                container.innerHTML = '<div class="text-center py-8 text-slate-400 text-sm">No jobs found</div>';
+                return;
+            }
+
+            container.innerHTML = jobs.map(job => `
+                <div class="border border-slate-200 rounded-xl p-4 hover:border-primary transition-colors">
+                    <div class="flex justify-between items-start mb-2">
+                        <h3 class="font-bold text-slate-800">${job.title}</h3>
+                        <span class="px-2.5 py-0.5 ${job.status === 'active' ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-600'} rounded-full text-xs font-bold">
+                            ${job.status || 'active'}
+                        </span>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2 text-sm text-slate-500">
+                        <div><i class="fas fa-building mr-1.5 text-xs"></i>${job.businessName || job.employerName}</div>
+                        <div><i class="fas fa-map-marker-alt mr-1.5 text-xs"></i>${job.location}</div>
+                        <div><i class="fas fa-rupee-sign mr-1.5 text-xs"></i>${job.salary}</div>
+                        <div><i class="fas fa-users mr-1.5 text-xs"></i>${job.applicationsCount || 0} applications</div>
+                    </div>
+                    <div class="text-xs text-slate-400 mt-2">Posted: ${new Date(job.createdAt).toLocaleDateString()}</div>
+                </div>
+            `).join('');
+        }
+
+        function displayApplications(apps) {
+            const container = document.getElementById('applications-container');
+            if (apps.length === 0) {
+                container.innerHTML = '<div class="text-center py-8 text-slate-400 text-sm">No applications found</div>';
+                return;
+            }
+
+            container.innerHTML = apps.map(app => {
+                const statusColors = {
+                    pending: 'bg-amber-100 text-amber-700',
+                    accepted: 'bg-emerald-100 text-emerald-700',
+                    rejected: 'bg-red-100 text-red-700'
+                };
+                return `
+                    <div class="border border-slate-200 rounded-xl p-4 hover:border-primary transition-colors">
+                        <div class="flex justify-between items-start mb-2">
+                            <div>
+                                <h3 class="font-bold text-slate-800 text-sm">${app.workerName}</h3>
+                                <p class="text-xs text-slate-500">Applied to: ${app.jobTitle}</p>
+                            </div>
+                            <span class="px-2.5 py-0.5 ${statusColors[app.status] || 'bg-slate-100 text-slate-600'} rounded-full text-xs font-bold">${app.status}</span>
+                        </div>
+                        <div class="text-xs text-slate-500 space-y-1">
+                            <div><i class="fas fa-envelope mr-1.5"></i>${app.workerEmail}</div>
+                            <div><i class="fas fa-map-marker-alt mr-1.5"></i>${app.workerLocation}</div>
+                            <div><i class="fas fa-calendar mr-1.5"></i>${new Date(app.appliedAt).toLocaleDateString()}</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Tab switching (updated to fix event.target issue)
+        window.showTab = function(tabName, clickedBtn) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('hidden'));
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(tabName + '-tab').classList.remove('hidden');
+            clickedBtn.classList.add('active');
+        }
+
+        document.getElementById('user-filter').addEventListener('change', (e) => {
+            const filter = e.target.value;
+            displayUsers(filter === 'all' ? allUsers : allUsers.filter(u => u.userType === filter));
+        });
+
+        document.getElementById('user-search').addEventListener('input', (e) => {
+            const search = e.target.value.toLowerCase();
+            displayUsers(allUsers.filter(u => u.fullName.toLowerCase().includes(search) || u.email.toLowerCase().includes(search)));
+        });
+
+        document.getElementById('job-filter').addEventListener('change', (e) => {
+            const filter = e.target.value;
+            displayJobs(filter === 'all' ? allJobs : allJobs.filter(j => j.status === filter));
+        });
+
+        document.getElementById('app-filter').addEventListener('change', (e) => {
+            const filter = e.target.value;
+            displayApplications(filter === 'all' ? allApplications : allApplications.filter(a => a.status === filter));
+        });
+
+        window.viewUser = function(userId) {
+            const user = allUsers.find(u => u.id === userId);
+            alert(`User Details:\n\nName: ${user.fullName}\nEmail: ${user.email}\nType: ${user.userType}\nLocation: ${user.location}\nTrust Score: ${user.trustScore || 50}`);
+        }
+
+        window.suspendUser = async function(userId) {
+            if (confirm('Are you sure you want to suspend this user?')) {
+                try {
+                    await updateDoc(doc(db, 'users', userId), { isActive: false, suspendedAt: new Date().toISOString() });
+                    alert('User suspended successfully');
+                    await loadUsers();
+                    updateStatistics();
+                } catch (error) {
+                    alert('Error suspending user: ' + error.message);
+                }
+            }
+        }
+    </script>
+</body>
+</html>

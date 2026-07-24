@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employer Dashboard - WorkSetu</title>
+
+    <!-- EmailJS SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <!-- EmailJS global init — must run BEFORE any ES module that calls emailjs.send() -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            if (typeof emailjs !== 'undefined') {
+                emailjs.init('5J7XJWd2HXA804eyC');
+                console.log('[WorkSetu] EmailJS pre-initialized (employer-dashboard)');
+            }
+        });
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { primary: '#059669', secondary: '#2563EB', surface: '#F8FAFC' },
+                    fontFamily: { display: ['Sora','sans-serif'], body: ['DM Sans','sans-serif'] }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'DM Sans', sans-serif; background: #F8FAFC; }
+        h1,h2,h3 { font-family: 'Sora', sans-serif; }
+        .card { background: white; border-radius: 1.25rem; border: 1px solid #E2E8F0; }
+        .job-card { border: 1.5px solid #E2E8F0; border-radius: 1rem; padding: 1.25rem; transition: all 0.2s; }
+        .job-card:hover { border-color: #059669; box-shadow: 0 4px 20px rgba(5,150,105,0.1); }
+        .bottom-nav { display: none; }
+        @media (max-width: 768px) {
+            .bottom-nav { display: flex; }
+            body { padding-bottom: 70px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== NAVIGATION ===== -->
+    <!-- UI UPGRADED: Emerald-themed nav for employers -->
+    <nav class="bg-white border-b border-slate-200 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 py-3">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-8 h-8 bg-emerald-600 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-briefcase text-white text-xs"></i>
+                    </div>
+                    <span class="text-lg font-bold text-slate-800" style="font-family:'Sora',sans-serif">WorkSetu</span>
+                </div>
+
+                <div class="hidden md:flex items-center gap-6">
+                    <a href="employer-dashboard.html" class="text-emerald-600 font-semibold text-sm border-b-2 border-emerald-600 pb-1">
+                        <i class="fas fa-home mr-1.5"></i>Dashboard
+                    </a>
+                    <a href="post-job.html" class="text-slate-500 hover:text-emerald-600 transition-colors text-sm">
+                        <i class="fas fa-plus-circle mr-1.5"></i>Post Job
+                    </a>
+                    <a href="my-jobs.html" class="text-slate-500 hover:text-emerald-600 transition-colors text-sm">
+                        <i class="fas fa-briefcase mr-1.5"></i>My Jobs
+                    </a>
+                    <a href="all-applications.html" class="text-slate-500 hover:text-emerald-600 transition-colors text-sm">
+                        <i class="fas fa-users mr-1.5"></i>Applications
+                    </a>
+                </div>
+
+                <div class="flex items-center gap-3">
+                    <button id="notifications-btn" class="relative w-9 h-9 bg-slate-100 rounded-xl flex items-center justify-center text-slate-600 hover:bg-slate-200 transition-colors">
+                        <i class="fas fa-bell text-sm"></i>
+                        <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs w-4 h-4 rounded-full flex items-center justify-center leading-none">5</span>
+                    </button>
+
+                    <div class="relative">
+                        <button id="profile-menu-btn" class="flex items-center gap-2 hover:bg-slate-100 rounded-xl p-1.5 pr-2.5 transition-colors">
+                            <div class="w-8 h-8 bg-emerald-100 rounded-xl flex items-center justify-center">
+                                <i class="fas fa-building text-emerald-600 text-sm"></i>
+                            </div>
+                            <span id="user-name-nav" class="hidden md:block text-sm font-semibold text-slate-700">Loading...</span>
+                            <i class="fas fa-chevron-down text-xs text-slate-400"></i>
+                        </button>
+
+                        <div id="profile-dropdown" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-2xl shadow-xl border border-slate-100 py-2 z-50">
+                            <a href="#profile" class="flex items-center gap-3 px-4 py-2.5 text-slate-600 hover:bg-slate-50 text-sm">
+                                <i class="fas fa-building w-4 text-slate-400"></i>My Profile
+                            </a>
+                            <a href="#settings" class="flex items-center gap-3 px-4 py-2.5 text-slate-600 hover:bg-slate-50 text-sm">
+                                <i class="fas fa-cog w-4 text-slate-400"></i>Settings
+                            </a>
+                            <div class="border-t border-slate-100 my-1"></div>
+                            <button id="logout-btn" class="w-full flex items-center gap-3 px-4 py-2.5 text-red-600 hover:bg-red-50 text-sm">
+                                <i class="fas fa-sign-out-alt w-4"></i>Logout
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ===== MAIN CONTENT ===== -->
+    <div class="max-w-7xl mx-auto px-4 py-6">
+        <div class="grid md:grid-cols-3 gap-5">
+
+            <!-- LEFT COLUMN -->
+            <div class="md:col-span-1 space-y-4">
+
+                <!-- Profile Card -->
+                <div class="card overflow-hidden">
+                    <div class="bg-gradient-to-br from-emerald-600 to-emerald-800 p-5 text-white text-center">
+                        <div class="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center mx-auto mb-3 border border-white/30">
+                            <i class="fas fa-building text-white text-2xl"></i>
+                        </div>
+                        <h2 id="business-name" class="text-xl font-bold mb-0.5">Loading...</h2>
+                        <p id="business-type" class="text-emerald-200 text-sm">Loading...</p>
+                        <p id="user-location" class="text-emerald-200 text-sm mt-1">
+                            <i class="fas fa-map-marker-alt mr-1"></i>Loading...
+                        </p>
+                    </div>
+                    <div class="p-5">
+                        <div class="bg-slate-50 rounded-xl p-4 mb-4">
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="text-sm text-slate-500 font-medium">Trust Score</span>
+                                <span class="text-lg font-bold text-slate-800">
+                                    <span id="trust-score">50</span><span class="text-slate-400 text-sm font-normal">/100</span>
+                                </span>
+                            </div>
+                            <div class="w-full bg-slate-200 rounded-full h-2">
+                                <div id="trust-score-bar" class="bg-emerald-500 h-2 rounded-full transition-all duration-500" style="width: 50%"></div>
+                            </div>
+                        </div>
+                        <button class="w-full bg-emerald-600 text-white py-2.5 rounded-xl font-semibold hover:bg-emerald-700 transition-all text-sm flex items-center justify-center gap-2">
+                            <i class="fas fa-edit text-xs"></i>Edit Profile
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Quick Stats -->
+                <div class="card p-5">
+                    <h3 class="font-bold text-slate-800 mb-4 text-sm">Quick Stats</h3>
+                    <div class="space-y-3">
+                        <div class="flex justify-between items-center">
+                            <div class="flex items-center gap-2 text-slate-500 text-sm">
+                                <div class="w-7 h-7 bg-emerald-100 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-briefcase text-emerald-600 text-xs"></i>
+                                </div>
+                                Active Jobs
+                            </div>
+                            <span class="font-bold text-slate-800" id="active-jobs">0</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <div class="flex items-center gap-2 text-slate-500 text-sm">
+                                <div class="w-7 h-7 bg-blue-100 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-users text-blue-600 text-xs"></i>
+                                </div>
+                                Total Applications
+                            </div>
+                            <span class="font-bold text-slate-800" id="total-applications">0</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <div class="flex items-center gap-2 text-slate-500 text-sm">
+                                <div class="w-7 h-7 bg-amber-100 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-check text-amber-600 text-xs"></i>
+                                </div>
+                                Jobs Completed
+                            </div>
+                            <span class="font-bold text-slate-800" id="completed-jobs">0</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <div class="flex items-center gap-2 text-slate-500 text-sm">
+                                <div class="w-7 h-7 bg-slate-100 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-rupee-sign text-slate-500 text-xs"></i>
+                                </div>
+                                Total Spent
+                            </div>
+                            <span class="font-bold text-slate-800" id="total-spent">₹0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="card p-5">
+                    <h3 class="font-bold text-slate-800 mb-4 text-sm">Quick Actions</h3>
+                    <div class="space-y-3">
+                        <a href="post-job.html" class="flex items-center justify-center gap-2 w-full bg-emerald-600 text-white py-2.5 rounded-xl hover:bg-emerald-700 transition-all font-semibold text-sm shadow-md shadow-emerald-200">
+                            <i class="fas fa-plus-circle"></i>Post New Job
+                        </a>
+                        <button class="flex items-center justify-center gap-2 w-full bg-blue-600 text-white py-2.5 rounded-xl hover:bg-blue-700 transition-all font-semibold text-sm">
+                            <i class="fas fa-search"></i>Find Workers
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT COLUMN -->
+            <div class="md:col-span-2 space-y-5">
+
+                <!-- Welcome Banner -->
+                <div class="bg-gradient-to-r from-emerald-600 to-emerald-800 rounded-2xl p-6 text-white relative overflow-hidden">
+                    <div class="absolute right-0 top-0 w-32 h-full bg-white/5 rounded-l-full"></div>
+                    <h1 class="text-2xl font-bold mb-1">Welcome back, <span id="welcome-name">Employer</span>! 👋</h1>
+                    <p class="text-emerald-100 text-sm">Manage your jobs and find the best workers for your needs.</p>
+                </div>
+
+                <!-- Stats Cards -->
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="card p-5 hover:shadow-md transition-shadow">
+                        <div class="flex items-center gap-3 mb-2">
+                            <div class="w-10 h-10 bg-emerald-100 rounded-xl flex items-center justify-center">
+                                <i class="fas fa-briefcase text-emerald-600"></i>
+                            </div>
+                            <div>
+                                <div class="text-2xl font-bold text-slate-800" id="stat-jobs">0</div>
+                                <div class="text-xs text-slate-500">Active Jobs</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card p-5 hover:shadow-md transition-shadow">
+                        <div class="flex items-center gap-3 mb-2">
+                            <div class="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center">
+                                <i class="fas fa-users text-blue-600"></i>
+                            </div>
+                            <div>
+                                <div class="text-2xl font-bold text-slate-800" id="stat-applications">0</div>
+                                <div class="text-xs text-slate-500">New Applications</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- My Posted Jobs -->
+                <div class="card p-5">
+                    <div class="flex justify-between items-center mb-5">
+                        <h2 class="font-bold text-slate-800 flex items-center gap-2">
+                            <i class="fas fa-briefcase text-emerald-600"></i>My Posted Jobs
+                        </h2>
+                        <a href="post-job.html" class="text-emerald-600 hover:underline text-sm font-semibold flex items-center gap-1">
+                            <i class="fas fa-plus text-xs"></i>Post New
+                        </a>
+                    </div>
+
+                    <div id="posted-jobs-container" class="space-y-3">
+                        <!-- Default loading/empty state -->
+                        <div class="text-center py-12">
+                            <div class="w-16 h-16 bg-slate-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                                <i class="fas fa-briefcase text-slate-300 text-2xl"></i>
+                            </div>
+                            <h3 class="font-bold text-slate-700 mb-1">No jobs posted yet</h3>
+                            <p class="text-slate-400 text-sm mb-4">Start by posting your first job!</p>
+                            <a href="post-job.html" class="inline-flex items-center gap-2 bg-emerald-600 text-white px-5 py-2.5 rounded-xl hover:bg-emerald-700 transition-all font-semibold text-sm shadow-md shadow-emerald-200">
+                                <i class="fas fa-plus-circle"></i>Post Your First Job
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Applications -->
+                <div class="card p-5">
+                    <div class="flex justify-between items-center mb-5">
+                        <h2 class="font-bold text-slate-800 flex items-center gap-2">
+                            <i class="fas fa-file-alt text-blue-600"></i>Recent Applications
+                        </h2>
+                        <button class="text-emerald-600 hover:underline text-sm font-medium">
+                            View All <i class="fas fa-arrow-right ml-1 text-xs"></i>
+                        </button>
+                    </div>
+
+                    <div id="applications-container" class="space-y-3">
+                        <div class="text-center py-8">
+                            <i class="fas fa-inbox text-3xl text-slate-200 mb-3"></i>
+                            <p class="text-slate-400 text-sm">No applications yet</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile Bottom Nav -->
+    <div class="bottom-nav fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 px-6 py-3 z-50 justify-around items-center">
+        <a href="employer-dashboard.html" class="flex flex-col items-center gap-1 text-emerald-600">
+            <i class="fas fa-home text-lg"></i>
+            <span class="text-xs font-semibold">Home</span>
+        </a>
+        <a href="post-job.html" class="flex flex-col items-center gap-1 text-slate-400">
+            <i class="fas fa-plus-circle text-lg"></i>
+            <span class="text-xs">Post Job</span>
+        </a>
+        <a href="my-jobs.html" class="flex flex-col items-center gap-1 text-slate-400">
+            <i class="fas fa-briefcase text-lg"></i>
+            <span class="text-xs">My Jobs</span>
+        </a>
+        <a href="all-applications.html" class="flex flex-col items-center gap-1 text-slate-400">
+            <i class="fas fa-users text-lg"></i>
+            <span class="text-xs">Applications</span>
+        </a>
+    </div>
+
+    <!-- JavaScript (UNCHANGED) -->
+    <script type="module">
+        import { getCurrentUser, getUserData, logoutUser, checkAuthState } from '../js/auth.js';
+        import { db, collection, query, where, getDocs, orderBy, limit, doc, updateDoc, deleteDoc } from '../js/firebase-config.js';
+
+        checkAuthState(async (user) => {
+            if (!user) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            const result = await getUserData(user.uid);
+            if (result.success) {
+                const userData = result.data;
+
+                if (userData.userType !== 'employer') {
+                    alert('This page is only for employers!');
+                    window.location.href = userData.userType === 'worker' ? 'worker-dashboard.html' : 'login.html';
+                    return;
+                }
+
+                document.getElementById('business-name').textContent = userData.businessName || 'Business Name';
+                document.getElementById('business-type').textContent = userData.businessType || 'Business Type';
+                document.getElementById('user-name-nav').textContent = userData.fullName;
+                document.getElementById('welcome-name').textContent = userData.fullName.split(' ')[0];
+                document.getElementById('user-location').textContent = userData.location;
+                document.getElementById('trust-score').textContent = userData.trustScore || 50;
+                document.getElementById('trust-score-bar').style.width = (userData.trustScore || 50) + '%';
+
+                await loadPostedJobs(user.uid);
+            }
+        });
+
+        document.getElementById('profile-menu-btn').addEventListener('click', () => {
+            document.getElementById('profile-dropdown').classList.toggle('hidden');
+        });
+
+        document.addEventListener('click', (e) => {
+            const dropdown = document.getElementById('profile-dropdown');
+            const btn = document.getElementById('profile-menu-btn');
+            if (!dropdown.contains(e.target) && !btn.contains(e.target)) {
+                dropdown.classList.add('hidden');
+            }
+        });
+
+        document.getElementById('logout-btn').addEventListener('click', async () => {
+            if (confirm('Are you sure you want to logout?')) {
+                const result = await logoutUser();
+                if (result.success) { window.location.href = '../index.html'; }
+            }
+        });
+
+        async function loadPostedJobs(employerId) {
+            try {
+                const jobsRef = collection(db, 'jobs');
+                const q = query(jobsRef, where('employerId', '==', employerId), orderBy('createdAt', 'desc'));
+                const querySnapshot = await getDocs(q);
+
+                if (querySnapshot.empty) { return; }
+
+                const container = document.getElementById('posted-jobs-container');
+                container.innerHTML = '';
+
+                let activeJobsCount = 0;
+                let totalApplications = 0;
+
+                // Today at midnight — compare date only, not time
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+
+                const expiryPromises = [];
+
+                querySnapshot.forEach((docSnap) => {
+                    const job = docSnap.data();
+                    const jobId = docSnap.id;
+
+                    // ── Auto-expire: if jobDate exists and is before today, mark expired ──
+                    if (job.status === 'active' && job.jobDate) {
+                        const jobDate = new Date(job.jobDate);
+                        jobDate.setHours(0, 0, 0, 0);
+                        if (jobDate < today) {
+                            // Soft-expire in Firestore (fire-and-forget per job)
+                            expiryPromises.push(
+                                updateDoc(doc(db, 'jobs', jobId), { status: 'expired' })
+                                    .then(() => console.log(`[WorkSetu] Job ${jobId} auto-marked as expired`))
+                                    .catch(err => console.error(`[WorkSetu] Failed to expire job ${jobId}:`, err))
+                            );
+                            job.status = 'expired'; // Update local reference immediately
+                        }
+                    }
+
+                    // Employers see ALL their jobs (active, expired, deleted) for management
+                    if (job.status === 'active') activeJobsCount++;
+                    totalApplications += job.applicationsCount || 0;
+
+                    const jobCard = createJobCard(jobId, job);
+                    container.appendChild(jobCard);
+                });
+
+                // Wait for all expiry updates (non-blocking to UI, but logged)
+                if (expiryPromises.length > 0) {
+                    Promise.all(expiryPromises).catch(err => console.error('[WorkSetu] Expiry batch error:', err));
+                }
+
+                document.getElementById('active-jobs').textContent = activeJobsCount;
+                document.getElementById('stat-jobs').textContent = activeJobsCount;
+                document.getElementById('total-applications').textContent = totalApplications;
+                document.getElementById('stat-applications').textContent = totalApplications;
+
+            } catch (error) {
+                console.error('Error loading jobs:', error);
+            }
+        }
+
+        function createJobCard(jobId, job) {
+            const card = document.createElement('div');
+            card.className = 'job-card';
+            card.setAttribute('data-job-id', jobId);
+
+            // Status badge colours — active=green, expired=amber, deleted=red, others=slate
+            const statusColor = job.status === 'active'
+                ? 'bg-emerald-100 text-emerald-700'
+                : job.status === 'expired'
+                    ? 'bg-amber-100 text-amber-700'
+                    : job.status === 'deleted'
+                        ? 'bg-red-100 text-red-600'
+                        : 'bg-slate-100 text-slate-600';
+
+            card.innerHTML = `
+                <div class="flex justify-between items-start mb-3">
+                    <div class="flex-1">
+                        <h3 class="font-bold text-slate-800 mb-0.5">${job.title}</h3>
+                        <p class="text-slate-500 text-sm"><i class="fas fa-tools mr-1"></i>${job.skillRequired || 'General'}</p>
+                    </div>
+                    <span class="${statusColor} px-2.5 py-1 rounded-full text-xs font-bold ml-3 flex-shrink-0 uppercase">${job.status || 'Active'}</span>
+                </div>
+
+                <div class="grid grid-cols-2 gap-2 mb-3">
+                    <div class="text-xs text-slate-500 flex items-center gap-1.5"><i class="fas fa-map-marker-alt text-emerald-600 w-3"></i>${job.location}</div>
+                    <div class="text-xs text-slate-500 flex items-center gap-1.5"><i class="fas fa-rupee-sign text-emerald-600 w-3"></i>${job.salary || 'Not specified'}</div>
+                    <div class="text-xs text-slate-500 flex items-center gap-1.5"><i class="fas fa-calendar text-slate-400 w-3"></i>${job.jobType || 'Full Day'}</div>
+                    <div class="text-xs text-slate-500 flex items-center gap-1.5"><i class="fas fa-users text-blue-600 w-3"></i>${job.applicationsCount || 0} Applications</div>
+                </div>
+
+                <p class="text-sm text-slate-500 mb-3 line-clamp-2">${job.description || 'No description'}</p>
+
+                <div class="text-xs text-slate-400 mb-3">Posted: ${formatDate(job.createdAt)}</div>
+
+                <div class="flex gap-2">
+                    <button class="view-applications-btn flex-1 bg-blue-600 text-white py-2 rounded-xl hover:bg-blue-700 transition-colors text-sm font-bold" data-job-id="${jobId}">
+                        <i class="fas fa-users mr-1"></i>View Applications (${job.applicationsCount || 0})
+                    </button>
+                    <button class="w-9 h-9 border border-slate-200 rounded-xl hover:bg-slate-50 transition-colors flex items-center justify-center text-slate-500">
+                        <i class="fas fa-edit text-sm"></i>
+                    </button>
+                    <button class="delete-job-btn w-9 h-9 border border-red-200 text-red-500 rounded-xl hover:bg-red-50 transition-colors flex items-center justify-center" data-job-id="${jobId}" title="Delete job">
+                        <i class="fas fa-trash text-sm"></i>
+                    </button>
+                </div>
+            `;
+
+            // ── View Applications ───────────────────────────────────────────────────
+            const viewBtn = card.querySelector('.view-applications-btn');
+            viewBtn.addEventListener('click', function() {
+                window.location.href = `view-applications.html?jobId=${jobId}`;
+            });
+
+            // ── Delete Job (soft-delete: status → "deleted") ────────────────────────
+            const deleteBtn = card.querySelector('.delete-job-btn');
+            deleteBtn.addEventListener('click', async function(e) {
+                e.stopPropagation();
+
+                // Guard: already deleted
+                if (job.status === 'deleted') {
+                    alert('This job has already been deleted.');
+                    return;
+                }
+
+                const confirmed = confirm(
+                    `Are you sure you want to delete "${job.title}"?\n\nThis action cannot be undone. The job will be removed from all worker listings.`
+                );
+                if (!confirmed) return;
+
+                // Visual feedback: disable button, show spinner
+                deleteBtn.disabled = true;
+                deleteBtn.innerHTML = '<i class="fas fa-spinner fa-spin text-sm"></i>';
+
+                try {
+                    await updateDoc(doc(db, 'jobs', jobId), {
+                        status: 'deleted',
+                        deletedAt: new Date().toISOString()
+                    });
+
+                    console.log(`[WorkSetu] ✅ Job ${jobId} soft-deleted successfully`);
+
+                    // ── Instant UI update: fade out and remove the card ──
+                    card.style.transition = 'opacity 0.35s ease, transform 0.35s ease';
+                    card.style.opacity = '0';
+                    card.style.transform = 'scale(0.97)';
+                    setTimeout(() => {
+                        card.remove();
+
+                        // Decrement active jobs counter if the job was active
+                        if (job.status === 'active') {
+                            const activeEl = document.getElementById('active-jobs');
+                            const statEl   = document.getElementById('stat-jobs');
+                            if (activeEl) activeEl.textContent = Math.max(0, parseInt(activeEl.textContent) - 1);
+                            if (statEl)   statEl.textContent   = Math.max(0, parseInt(statEl.textContent)   - 1);
+                        }
+
+                        // Show empty state if no more cards remain
+                        const container = document.getElementById('posted-jobs-container');
+                        if (container && container.children.length === 0) {
+                            container.innerHTML = `
+                                <div class="text-center py-12">
+                                    <div class="w-16 h-16 bg-slate-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                                        <i class="fas fa-briefcase text-slate-300 text-2xl"></i>
+                                    </div>
+                                    <h3 class="font-bold text-slate-700 mb-1">No jobs posted yet</h3>
+                                    <p class="text-slate-400 text-sm mb-4">Start by posting your first job!</p>
+                                    <a href="post-job.html" class="inline-flex items-center gap-2 bg-emerald-600 text-white px-5 py-2.5 rounded-xl hover:bg-emerald-700 transition-all font-semibold text-sm shadow-md shadow-emerald-200">
+                                        <i class="fas fa-plus-circle"></i>Post Your First Job
+                                    </a>
+                                </div>
+                            `;
+                        }
+                    }, 350);
+
+                } catch (error) {
+                    console.error('[WorkSetu] ❌ Failed to delete job:', error);
+                    alert('Failed to delete job. Please try again.');
+
+                    // Restore button state on error
+                    deleteBtn.disabled = false;
+                    deleteBtn.innerHTML = '<i class="fas fa-trash text-sm"></i>';
+                }
+            });
+
+            return card;
+        }
+
+        function formatDate(timestamp) {
+            if (!timestamp) return 'Just now';
+            const date = new Date(timestamp);
+            const now = new Date();
+            const diffMs = now - date;
+            const diffMins = Math.floor(diffMs / 60000);
+            if (diffMins < 60) return `${diffMins} minutes ago`;
+            const diffHours = Math.floor(diffMins / 60);
+            if (diffHours < 24) return `${diffHours} hours ago`;
+            const diffDays = Math.floor(diffHours / 24);
+            if (diffDays < 7) return `${diffDays} days ago`;
+            return date.toLocaleDateString();
+        }
+    </script>
+</body>
+</html>
